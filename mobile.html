@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#FFFFFF">
+<title>Rocken Talent — Mobile</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 391'%3E%3Cpath fill='%234893F4' d='M73.5395,150.575L7.5625,164.123L90.4221,193.124C109.134,187.652,126.254,177.756,140.334,164.271C154.414,150.786,165.04,134.109,171.314,115.65L209.879,0.537109H162.22L128.165,101.025C123.992,113.229,116.792,124.176,107.239,132.841C97.686,141.507,86.0914,147.608,73.5395,150.575ZM309.461,239.361L374.526,226L292.536,196.709C273.805,202.173,256.665,212.068,242.567,225.557C228.469,239.046,217.827,255.732,211.541,274.203L171.727,390.828H220.117L254.69,288.828C258.886,276.621,266.113,265.679,275.692,257.027C285.271,248.375,296.891,242.296,309.461,239.361ZM274.62,176.138L383.891,216.305V167.749L290.259,133.362C267.846,125.076,252.393,106.433,241.579,74.8633L221.113,4.82617L196.027,81.1192L198.327,88.9495C213.614,134.419,238.659,162.922,274.62,176.138ZM108.381,213.798L0.808594,174.336V222.892L92.6585,256.657C116.025,265.254,133.239,285.658,141.131,314.369L162.003,382.337L174.215,345.278L186.426,308.219L184.23,301.259C172.278,258.213,145.792,227.553,108.381,213.798Z'/%3E%3C/svg%3E">
+<style>
+@font-face { font-family:'Nohemi'; src:url('fonts/nohemi-bold.woff2') format('woff2'); font-weight:700 800; font-style:normal; font-display:swap; }
+@font-face { font-family:'Nohemi'; src:url('fonts/nohemi-medium.woff2') format('woff2'); font-weight:500 600; font-style:normal; font-display:swap; }
+@font-face { font-family:'Manrope'; src:url('fonts/manrope-variable.woff2') format('woff2'); font-weight:200 800; font-style:normal; font-display:swap; unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family:'Manrope'; src:url('fonts/manrope-variable-ext.woff2') format('woff2'); font-weight:200 800; font-style:normal; font-display:swap; unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+
+:root {
+  --black:#000000; --white:#FFFFFF;
+  --green:#16A34A; /* nur Status (online / aktiv) */
+  --blue:#4893F4; --blue-dark:#2F6BCF; --blue-tint:#EDF4FE; --blue-soft:rgba(72,147,244,.14);
+  --navy:#182853; --cosmic:#0A0E1A;
+  --g50:#F6F7F8; --g100:#EEF0F2; --g200:#E3E6E8; --g400:#98A1AB; --g600:#5A6472; --g700:#374151;
+  --amber:#D97706; --amber-tint:#FEF5E7; --red:#DC2626; --red-tint:#FDF0F0;
+  --line:rgba(0,0,0,.07); --line-strong:rgba(0,0,0,.12);
+  --fh:'Nohemi','Manrope','Helvetica Neue',system-ui,sans-serif;
+  --fb:'Manrope','Helvetica Neue',system-ui,sans-serif;
+  --pad:18px;
+  /* Easing-System: starke Custom-Curves statt schwacher CSS-Defaults */
+  --ease-out:cubic-bezier(.23,1,.32,1);
+  --ease-in-out:cubic-bezier(.77,0,.175,1);
+  --ease-drawer:cubic-bezier(.32,.72,0,1);
+  --sh-sm:0 1px 3px rgba(16,24,40,.06), 0 1px 2px rgba(16,24,40,.04);
+  --sh-md:0 8px 20px -6px rgba(16,24,40,.12), 0 2px 6px -2px rgba(16,24,40,.05);
+  --sh-lg:0 24px 56px -16px rgba(16,24,40,.26);
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body { height:100%; }
+body { font-family:var(--fb); font-size:15px; color:var(--black); background:var(--g50);
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow:hidden; }
+h1,h2,h3,h4 { font-family:var(--fh); letter-spacing:-.015em; font-weight:700; }
+button { font-family:var(--fb); cursor:pointer; border:none; background:none; }
+::selection { background:var(--blue); color:var(--white); }
+
+/* ---------- App-Shell ---------- */
+.app { height:100dvh; display:flex; flex-direction:column; background:var(--g50); position:relative; }
+/* Desktop: Phone-Frame, damit der Prototyp auch am Mac als «Gerät» demonstrierbar ist */
+@media (min-width:540px) {
+  body { background:#0F1115; display:flex; align-items:center; justify-content:center; }
+  .app { max-width:400px; width:400px; height:min(860px, calc(100dvh - 48px));
+    border-radius:44px; box-shadow:0 40px 100px -20px rgba(0,0,0,.7), 0 0 0 10px #1C1F26, 0 0 0 11px #2A2E37;
+    overflow:hidden; }
+}
+
+/* ---------- Topbar ---------- */
+.topbar { flex-shrink:0; display:flex; align-items:center; justify-content:space-between;
+  padding:14px var(--pad) 12px; background:rgba(255,255,255,.86); backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line); z-index:30; }
+.tb-logo { display:flex; align-items:center; gap:8px; }
+.tb-logo .logo-star { position:relative; width:21px; height:21px; }
+.tb-logo .logo-star svg { width:100%; height:100%; display:block; }
+.tb-logo .logo-star .ls-accent { position:absolute; width:9px; height:9px; right:-4px; bottom:-3px; }
+.tb-logo .wm b { font-family:var(--fh); font-size:16px; letter-spacing:-.02em; }
+.tb-logo .wm span { font-size:9px; color:var(--blue); font-weight:800; letter-spacing:.18em; text-transform:uppercase; margin-left:5px; }
+.tb-right { display:flex; align-items:center; gap:10px; }
+.bell { position:relative; width:38px; height:38px; border-radius:50%; background:var(--white);
+  border:1px solid var(--line); display:flex; align-items:center; justify-content:center; box-shadow:var(--sh-sm); }
+.bell .badge { position:absolute; top:-3px; right:-3px; min-width:17px; height:17px; padding:0 5px;
+  background:var(--blue); color:var(--white); border:2px solid var(--white); border-radius:99px;
+  font-size:9.5px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+.tb-avatar { width:38px; height:38px; border-radius:50%; object-fit:cover; border:none; padding:0;
+  box-shadow:0 0 0 2px var(--white), 0 0 0 3.5px var(--blue-soft); }
+
+/* ---------- Main / Views ---------- */
+.main { flex:1; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
+  padding:20px var(--pad) 36px;
+  background:
+    radial-gradient(420px 220px at 100% -60px, rgba(72,147,244,.07), transparent 65%),
+    var(--g50); }
+/* Tab-Wechsel ist häufig → kurz + dezent (Stagger 35ms, unter 300ms gesamt) */
+.view-anim > * { opacity:0; animation:rise .3s var(--ease-out) forwards; }
+.view-anim > *:nth-child(1){animation-delay:0s}.view-anim > *:nth-child(2){animation-delay:.035s}
+.view-anim > *:nth-child(3){animation-delay:.07s}.view-anim > *:nth-child(4){animation-delay:.105s}
+.view-anim > *:nth-child(5){animation-delay:.14s}.view-anim > *:nth-child(6){animation-delay:.175s}
+.view-anim > *:nth-child(7){animation-delay:.21s}.view-anim > *:nth-child(8){animation-delay:.245s}
+@keyframes rise { from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none} }
+
+/* ---------- Tabbar ---------- */
+.tabbar { flex-shrink:0; display:flex; background:rgba(255,255,255,.9); backdrop-filter:blur(18px);
+  border-top:1px solid var(--line); padding:8px 6px calc(10px + env(safe-area-inset-bottom)); z-index:30; }
+.tab-item { flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:4px;
+  padding:5px 0; color:var(--g400); font-size:10px; font-weight:700; position:relative; user-select:none; transition:color .15s; }
+.tab-item svg { width:23px; height:23px; transition:transform .2s cubic-bezier(.2,.7,.2,1); }
+.tab-item.active { color:var(--black); }
+.tab-item.active svg { color:var(--blue); transform:translateY(-1px); }
+.tab-item:active svg { transform:scale(.9); }
+.tab-badge { position:absolute; top:0; right:calc(50% - 21px); min-width:16px; height:16px; padding:0 4px;
+  background:var(--blue); color:var(--white); border:2px solid var(--white); border-radius:99px;
+  font-size:9px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+
+/* ---------- Bausteine ---------- */
+.eyebrow { display:flex; align-items:center; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:800; color:var(--g600); margin-bottom:8px; }
+.kstar { width:11px; height:11px; display:inline-block; vertical-align:-1px; margin-right:6px; flex-shrink:0; color:var(--blue); }
+.greet h1 { font-size:28px; }
+.greet p { color:var(--g600); font-size:14px; margin-top:6px; line-height:1.5; }
+.sec { display:flex; align-items:baseline; justify-content:space-between; margin:28px 0 13px; }
+.sec h2 { font-size:17px; }
+.sec .more { font-size:12.5px; font-weight:700; color:var(--blue-dark); }
+.card { background:var(--white); border:1px solid var(--line); border-radius:20px; box-shadow:var(--sh-sm); }
+.chip { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:4.5px 11px;
+  background:var(--g100); color:var(--g700); border-radius:99px; white-space:nowrap; }
+.chip.blue { background:var(--blue-tint); color:var(--blue-dark); }
+.chip.amber { background:var(--amber-tint); color:var(--amber); }
+.chip.red { background:var(--red-tint); color:var(--red); }
+.kicker { font-size:10px; letter-spacing:.13em; text-transform:uppercase; font-weight:800; color:var(--g400); }
+.kicker.blue { color:var(--blue); }
+.btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; min-height:44px;
+  border-radius:99px; font-weight:800; font-size:14px; transition:transform .12s, box-shadow .15s; }
+.btn:active { transform:scale(.975); }
+.btn-primary { background:linear-gradient(180deg,#5BA0F6,#4893F4); color:var(--white);
+  box-shadow:0 2px 6px rgba(72,147,244,.4), inset 0 1px 0 rgba(255,255,255,.2); }
+.btn-primary:disabled { background:var(--g100); color:var(--g400); box-shadow:none; }
+.btn-ghost { background:var(--white); color:var(--black); border:1.5px solid var(--line-strong); }
+.btn-danger { background:var(--white); color:var(--red); border:1.5px solid rgba(220,38,38,.25); }
+.btn-dark { background:var(--black); color:var(--white); }
+.btn-sm { min-height:38px; font-size:13px; }
+.btn-link { min-height:34px; font-size:12.5px; font-weight:700; color:var(--g600); width:auto; padding:0 10px; }
+.btn-link:hover { color:var(--blue-dark); }
+.split { display:flex; gap:10px; }
+.split .btn { flex:1; }
+.logo-tile { width:44px; height:44px; background:linear-gradient(145deg,#1F1F23,#000); color:var(--white);
+  border-radius:13px; display:flex; align-items:center; justify-content:center;
+  font-family:var(--fh); font-weight:700; font-size:18px; flex-shrink:0; }
+
+/* Segmented Control */
+.seg { display:flex; background:var(--g100); border-radius:99px; padding:4px; margin:16px 0 18px; }
+.seg button { flex:1; min-height:38px; border-radius:99px; font-weight:700; font-size:13px; color:var(--g600);
+  white-space:nowrap; transition:all .18s; }
+.seg button.on { background:var(--white); color:var(--black); box-shadow:var(--sh-sm); }
+.seg button .cnt { font-size:10.5px; color:var(--g400); margin-left:3px; }
+
+/* Horizontal Snap-Carousel */
+.hscroll { display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
+  margin:0 calc(-1 * var(--pad)); padding:2px var(--pad) 10px; scrollbar-width:none; }
+.hscroll::-webkit-scrollbar { display:none; }
+.hscroll > * { scroll-snap-align:start; flex-shrink:0; }
+
+/* Action-Card (Vorschlag) */
+.acard { padding:18px; border:1px solid rgba(72,147,244,.25); border-radius:22px;
+  background:linear-gradient(180deg,#FDFEFF,#F5FAFE); box-shadow:var(--sh-sm);
+  transition:opacity .35s, transform .35s; }
+.acard.leaving { opacity:0; transform:translateX(46px); }
+.acard .ahead { display:flex; align-items:center; gap:11px; margin-bottom:12px; }
+.acard .ahead img { width:42px; height:42px; border-radius:50%; object-fit:cover;
+  box-shadow:0 0 0 2px var(--white), 0 0 0 3.5px var(--blue-soft); }
+.acard .ahead .who { flex:1; min-width:0; }
+.acard .ahead .who b { font-size:13px; display:block; }
+.acard .ahead .who span { font-size:11px; color:var(--g600); }
+.acard h3 { font-size:17.5px; line-height:1.3; }
+.acard .sub { color:var(--g600); font-size:13px; margin-top:4px; }
+.acard .why { margin-top:11px; font-size:13px; line-height:1.5; color:var(--g700);
+  background:var(--white); border:1px solid var(--line); border-radius:13px; padding:10px 13px; }
+.acard .why b { color:var(--black); }
+.acard .cta { margin-top:12px; display:flex; flex-direction:column; gap:8px; }
+.salband { font-family:var(--fh); font-size:15px; font-weight:700; color:var(--blue-dark);
+  letter-spacing:-.01em; margin-top:6px; display:flex; align-items:center; gap:6px; }
+.salband .est { font-family:var(--fb); font-size:10px; font-weight:700; color:var(--g400); }
+.metaline { font-size:12.5px; color:var(--g600); margin-top:3px; }
+.quote { display:block; margin-top:9px; font-size:12.5px; color:var(--g600); font-style:italic; line-height:1.45; }
+.quote b { font-style:normal; color:var(--g400); font-size:10.5px; text-transform:uppercase; letter-spacing:.07em; white-space:nowrap; margin-left:4px; }
+.sla-line { display:inline-flex; align-items:center; gap:6px; margin-top:10px; font-size:11.5px; font-weight:700;
+  color:var(--blue-dark); background:var(--blue-tint); padding:5px 11px; border-radius:99px; }
+.mlabel { font-size:11px; font-weight:800; color:var(--blue-dark); letter-spacing:.04em; text-transform:uppercase; }
+.crit { display:flex; align-items:center; gap:10px; padding:8px 0; font-size:13.5px; border-bottom:1px solid var(--line); }
+.crit:last-child { border-bottom:none; }
+.crit .ok { width:20px; height:20px; border-radius:99px; background:var(--blue-tint); color:var(--blue-dark);
+  display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; flex-shrink:0; }
+.crit.miss { color:var(--g400); }
+.crit.miss .ok { background:var(--g100); color:var(--g400); }
+
+/* Bewerbung-Card */
+.bcard { padding:17px 18px; margin-bottom:12px; }
+.bcard .bhead { display:flex; gap:12px; align-items:center; }
+.bcard .bhead .bt { flex:1; min-width:0; }
+.bcard h3 { font-size:14.5px; line-height:1.35; }
+.bcard .co { font-size:12px; color:var(--g600); margin-top:2px; }
+.steps { display:flex; gap:5px; margin:14px 0 8px; }
+.steps i { flex:1; height:5px; border-radius:99px; background:var(--g100); }
+.steps i.done { background:var(--blue); }
+.steps i.cur { background:var(--blue); opacity:.45; animation:blink 1.8s infinite; }
+@keyframes blink { 0%,100%{opacity:.45} 50%{opacity:.9} }
+.steplabel { font-size:11.5px; font-weight:700; color:var(--g600); display:flex; justify-content:space-between; align-items:center; }
+.steplabel b { color:var(--black); }
+.nextbox { display:flex; gap:9px; margin-top:12px; padding:11px 13px; background:var(--g50);
+  border:1px solid var(--line); border-radius:13px; font-size:13px; line-height:1.5; }
+.nextbox .arrow { color:var(--blue); font-weight:800; flex-shrink:0; }
+/* Kompakter Termin-Block: ersetzt SLA + Nextbox + Button, wenn ein Termin ansteht */
+.appt { display:flex; align-items:center; gap:12px; margin-top:12px; padding:11px 13px;
+  background:var(--blue-tint); border:1px solid rgba(72,147,244,.22); border-radius:13px; }
+.appt .ab { flex:1; min-width:0; }
+.appt .ab b { font-size:13px; display:block; }
+.appt .ab span { font-size:11.5px; color:var(--g600); }
+
+/* Termine */
+.ecard { width:240px; padding:14px 15px; display:flex; gap:12px; align-items:center; }
+.ecard.full { width:auto; margin-bottom:11px; }
+.date-block { width:48px; flex-shrink:0; text-align:center; background:var(--g50);
+  border:1px solid var(--line); border-radius:11px; overflow:hidden; }
+.date-block .m { background:var(--black); color:var(--white); font-size:9px; font-weight:800; letter-spacing:.12em; padding:3px 0; }
+.date-block .d { font-family:var(--fh); font-size:19px; font-weight:700; padding:3px 0 5px; }
+.ecard .eb { min-width:0; flex:1; }
+.ecard .eb b { font-size:13px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ecard .eb span { font-size:11.5px; color:var(--g600); display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* Vollbreite Termine-Karten: Titel/Sub umbrechen statt abschneiden (lesbar auf Mobile) */
+.ecard.full .eb b, .ecard.full .eb span { white-space:normal; overflow:visible; text-overflow:clip; }
+.countdown { font-size:10px; font-weight:800; color:var(--blue); letter-spacing:.07em; text-transform:uppercase; }
+
+/* Match-Card */
+.mcard { padding:17px 18px; }
+.mcard.carousel { width:282px; }
+.mcard.list { margin-bottom:12px; }
+.mhead { display:flex; gap:12px; align-items:center; }
+.mhead .mt { flex:1; min-width:0; }
+.mhead h3 { font-size:14.5px; line-height:1.35; }
+.mhead .co { font-size:12px; color:var(--g600); margin-top:2px; }
+.score-ring { position:relative; width:46px; height:46px; flex-shrink:0; }
+.score-ring svg { transform:rotate(-90deg); display:block; }
+.score-ring .sval { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--fh); font-weight:700; font-size:12.5px; }
+.mreason { margin:12px 0; font-size:12.5px; line-height:1.5; color:var(--blue-dark); background:var(--blue-tint);
+  padding:9px 12px; border-radius:12px; }
+.tagrow { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:13px; }
+.heart { width:44px; height:44px; flex-shrink:0; border-radius:99px; background:var(--white);
+  border:1.5px solid var(--line-strong); font-size:17px; color:var(--g400);
+  display:flex; align-items:center; justify-content:center; transition:all .15s; }
+.heart.on { color:var(--white); background:var(--blue); border-color:var(--blue); }
+
+/* Artikel */
+.artcard { width:225px; padding:16px 17px; display:flex; flex-direction:column; min-height:128px; }
+.artcard h3 { font-size:13.5px; line-height:1.4; margin:8px 0 auto; }
+.artcard .af { display:flex; justify-content:space-between; margin-top:14px; font-size:11px; color:var(--g400); font-weight:600; }
+.artcard .af .read { color:var(--blue); font-weight:800; }
+
+/* Cosmic */
+.cosmic { position:relative; overflow:hidden; color:var(--white); border-radius:22px;
+  background:
+    radial-gradient(380px 240px at 90% -30%, rgba(72,147,244,.22), transparent 60%),
+    radial-gradient(340px 240px at -10% 130%, rgba(24,40,83,.75), transparent 62%),
+    var(--cosmic); }
+.cosmic::before { content:''; position:absolute; inset:0; pointer-events:none;
+  background-image:
+    radial-gradient(1px 1px at 12% 22%, rgba(255,255,255,.5) 50%, transparent 51%),
+    radial-gradient(1px 1px at 78% 14%, rgba(255,255,255,.4) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 55% 48%, rgba(255,255,255,.3) 50%, transparent 51%),
+    radial-gradient(1px 1px at 32% 78%, rgba(255,255,255,.35) 50%, transparent 51%),
+    radial-gradient(1px 1px at 90% 68%, rgba(255,255,255,.3) 50%, transparent 51%); }
+.star-wm { position:absolute; right:-26px; top:-22px; width:120px; height:120px;
+  color:var(--blue); opacity:.18; pointer-events:none; }
+
+/* Consultant-Card */
+.ccard { padding:16px 18px; display:flex; align-items:center; gap:13px; }
+.ccard img { width:50px; height:50px; border-radius:50%; object-fit:cover;
+  box-shadow:0 0 0 2px var(--white), 0 0 0 4px var(--blue-soft); }
+.ccard .cb { flex:1; min-width:0; }
+.ccard .cb b { font-size:14px; display:block; }
+.ccard .cb span { font-size:12px; color:var(--g600); display:flex; align-items:center; gap:5px; }
+.dot-online { width:7px; height:7px; border-radius:50%; background:var(--green); display:inline-block; flex-shrink:0; }
+.ccard button { min-height:42px; padding:0 18px; border-radius:99px; background:var(--black); color:var(--white);
+  font-weight:800; font-size:13px; flex-shrink:0; }
+
+/* Profil */
+.phero { padding:24px 20px; text-align:center; }
+.phero img { width:84px; height:84px; border-radius:50%; object-fit:cover;
+  box-shadow:0 0 0 3px var(--white), 0 0 0 5.5px var(--blue-soft), var(--sh-sm); }
+.phero h1 { font-size:22px; margin-top:12px; }
+.phero .role { color:var(--g600); font-size:13px; margin-top:4px; }
+.status-pill { margin-top:14px; display:inline-flex; align-items:center; gap:8px; border:1.5px solid var(--line-strong);
+  background:var(--white); padding:11px 19px; font-weight:700; font-size:13.5px; border-radius:99px; box-shadow:var(--sh-sm); }
+.ringrow { display:flex; align-items:center; gap:16px; padding:16px 18px; margin-top:12px; }
+.ringrow .ring-box { position:relative; width:62px; height:62px; flex-shrink:0; }
+.ringrow .ring-box svg { transform:rotate(-90deg); display:block; }
+.ringrow .rv { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--fh); font-size:15px; font-weight:700; }
+.ringrow .rb { flex:1; min-width:0; }
+.ringrow .rb b { font-size:14px; display:block; }
+.ringrow .rb span { font-size:12px; color:var(--g600); line-height:1.45; display:block; margin-top:3px; }
+.check-item { display:flex; align-items:center; gap:12px; padding:14px 18px; border-bottom:1px solid var(--line); }
+.check-item:last-child { border-bottom:none; }
+.check-item .box { width:23px; height:23px; border:1.5px solid var(--g200); border-radius:8px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px; color:var(--white); }
+.check-item.done .box { background:var(--blue); border-color:var(--blue); font-weight:800; }
+.check-item .lbl { flex:1; font-weight:600; font-size:13.5px; }
+.check-item.done .lbl { color:var(--g400); text-decoration:line-through; }
+.check-item .pts { font-size:12px; font-weight:800; color:var(--blue); }
+.check-item .go { color:var(--g400); font-size:16px; }
+.chiptabs { display:flex; gap:8px; overflow-x:auto; margin:20px calc(-1*var(--pad)) 14px; padding:2px var(--pad) 6px;
+  scrollbar-width:none; }
+.chiptabs::-webkit-scrollbar { display:none; }
+.chiptabs button { white-space:nowrap; padding:10px 17px; border-radius:99px; font-weight:700; font-size:13px;
+  background:var(--white); border:1.5px solid var(--line); color:var(--g600); flex-shrink:0; }
+.chiptabs button.on { background:var(--black); color:var(--white); border-color:var(--black); }
+.frow { padding:13px 18px; border-bottom:1px solid var(--line); }
+.frow:last-child { border-bottom:none; }
+.frow .fl { font-size:11px; color:var(--g400); font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+.frow .fv { font-size:14px; font-weight:600; margin-top:3px; }
+.frow input { width:100%; border:1.5px solid var(--line-strong); border-radius:11px; padding:10px 13px; margin-top:5px;
+  font-family:var(--fb); font-size:14px; outline:none; }
+.frow input:focus { border-color:var(--blue); box-shadow:0 0 0 3px var(--blue-soft); }
+.doc-row { display:flex; align-items:center; gap:12px; padding:14px 18px; border-bottom:1px solid var(--line); }
+.doc-row:last-child { border-bottom:none; }
+.doc-icon { width:40px; height:40px; background:var(--g100); border-radius:11px; display:flex;
+  align-items:center; justify-content:center; font-size:9px; font-weight:800; color:var(--g600); flex-shrink:0; }
+.doc-row .db { flex:1; min-width:0; }
+.doc-row .db b { font-size:13px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.doc-row .db span { font-size:11px; color:var(--g400); }
+.dropzone { border:1.5px dashed var(--line-strong); border-radius:16px; padding:26px 18px; text-align:center;
+  background:var(--g50); }
+.dropzone b { font-family:var(--fh); font-size:14px; display:block; }
+.dropzone span { font-size:12px; color:var(--g600); }
+textarea { width:100%; border:1.5px solid var(--line-strong); border-radius:13px; padding:13px;
+  font-family:var(--fb); font-size:14px; min-height:96px; outline:none; resize:vertical; }
+textarea:focus { border-color:var(--blue); box-shadow:0 0 0 3px var(--blue-soft); }
+.search { width:100%; border:1.5px solid var(--line); border-radius:99px; padding:13px 19px;
+  font-family:var(--fb); font-size:14px; outline:none; background:var(--white); box-shadow:var(--sh-sm); margin-top:16px; }
+.search:focus { border-color:var(--blue); box-shadow:0 0 0 3.5px var(--blue-soft); }
+
+/* Timeline */
+.tl { padding:4px 0; }
+.tl-item { display:flex; gap:12px; padding:8px 0; font-size:13px; line-height:1.45; }
+.tl-item .tld { width:78px; color:var(--g400); font-weight:600; flex-shrink:0; font-size:11.5px; padding-top:2px; }
+.tl-item .dot { width:8px; height:8px; border-radius:50%; background:var(--blue); margin-top:5px; flex-shrink:0; }
+.tl-item.future { color:var(--g400); }
+.tl-item.future .dot { background:var(--g200); }
+
+/* ---------- Bottom-Sheet ---------- */
+.sheet-root { position:fixed; inset:0; z-index:100; pointer-events:none; }
+.sheet-bg { position:absolute; inset:0; background:rgba(10,14,26,.45); backdrop-filter:blur(3px);
+  opacity:0; transition:opacity .28s; }
+.sheet { position:absolute; left:0; right:0; bottom:0; background:var(--white);
+  border-radius:26px 26px 0 0; box-shadow:var(--sh-lg); transform:translateY(104%);
+  transition:transform .26s var(--ease-drawer); /* Exit: schnell */
+  max-height:92dvh; display:flex; flex-direction:column; will-change:transform; }
+@media (min-width:540px) { .sheet-root { display:flex; justify-content:center; }
+  .sheet { width:400px; left:auto; right:auto; margin:0 auto; position:relative; align-self:flex-end; } }
+.sheet-root.open { pointer-events:auto; }
+.sheet-root.open .sheet-bg { opacity:1; }
+.sheet-root.open .sheet { transform:none; transition-duration:.42s; } /* Enter: ruhiger Drawer-Curve */
+.sheet .grab { padding:14px 0 8px; display:flex; justify-content:center; flex-shrink:0;
+  cursor:grab; touch-action:none; }
+.sheet .grab i { width:40px; height:5px; border-radius:99px; background:var(--g200); transition:background .15s; }
+.sheet .grab:active i { background:var(--g400); }
+.sheet.dragging { transition:none; }
+.sheet .sh-body { overflow-y:auto; padding:4px 20px calc(26px + env(safe-area-inset-bottom)); }
+.sheet h2 { font-size:19px; }
+/* Sticky CTA-Footer im Sheet */
+.sheet-foot { flex-shrink:0; padding:12px 20px calc(14px + env(safe-area-inset-bottom));
+  background:rgba(255,255,255,.92); backdrop-filter:blur(12px); border-top:1px solid var(--line);
+  display:flex; flex-direction:column; gap:8px; position:relative; }
+.sheet-foot::before { content:''; position:absolute; left:0; right:0; top:-26px; height:26px; pointer-events:none;
+  background:linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.95)); }
+/* Sheet-Inhalt steigt dezent nach (nur beim Öffnen) */
+.sheet-root.open .sh-body > * { animation:rise .34s var(--ease-out) backwards; }
+.sheet-root.open .sh-body > *:nth-child(-n+6) { animation-delay:calc(var(--i, 0) * 0s + .06s); }
+
+/* Detail-Bausteine (Vakanz-Ansicht) */
+.blt { display:flex; gap:10px; padding:6px 0; font-size:13.5px; line-height:1.5; color:var(--g700); }
+.blt::before { content:''; width:6px; height:6px; border-radius:99px; background:var(--blue);
+  flex-shrink:0; margin-top:7px; }
+.co-hero { display:flex; align-items:center; gap:12px; padding:14px 16px; background:var(--g50);
+  border:1px solid var(--line); border-radius:16px; margin:14px 0 4px; }
+.co-hero .ch-b { flex:1; min-width:0; }
+.co-hero .ch-b b { font-size:14px; display:block; }
+.co-hero .ch-b span { font-size:12px; color:var(--g600); line-height:1.45; display:block; margin-top:2px; }
+.sect { font-family:var(--fh); font-size:14.5px; font-weight:700; margin:18px 0 6px; display:flex; align-items:center; }
+.ssub { font-size:10px; letter-spacing:.12em; text-transform:uppercase; font-weight:800; color:var(--g400); margin:13px 0 6px; }
+.rolep { font-size:13.5px; line-height:1.55; color:var(--g700); }
+.locline { font-size:13.5px; color:var(--g700); display:flex; gap:8px; align-items:center; }
+.locline::before { content:''; width:14px; height:14px; flex-shrink:0;
+  background:var(--blue); -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Cpath d='M12 21s-7-5.1-7-11a7 7 0 0114 0c0 5.9-7 11-7 11z'/%3E%3Ccircle cx='12' cy='10' r='2.6'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Cpath d='M12 21s-7-5.1-7-11a7 7 0 0114 0c0 5.9-7 11-7 11z'/%3E%3Ccircle cx='12' cy='10' r='2.6'/%3E%3C/svg%3E") center/contain no-repeat; }
+.sheet-cover { position:relative; margin:2px -20px 14px; height:150px; overflow:hidden; }
+.sheet-cover img { width:100%; height:100%; object-fit:cover; }
+.sheet-cover::after { content:''; position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(10,14,26,.04) 35%, rgba(10,14,26,.62)); }
+.sheet-cover .sc-co { position:absolute; left:20px; bottom:11px; right:20px; color:var(--white);
+  font-weight:800; font-size:12.5px; z-index:1; text-shadow:0 1px 8px rgba(0,0,0,.4); }
+.gallery { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
+.gallery img { width:100%; height:92px; object-fit:cover; border-radius:13px; }
+.prep { display:flex; gap:11px; align-items:center; padding:11px 0; border-bottom:1px solid var(--line);
+  font-size:13.5px; cursor:pointer; user-select:none; }
+.prep:last-child { border-bottom:none; }
+.prep .pb { width:23px; height:23px; border:1.5px solid var(--g200); border-radius:8px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; color:var(--white); font-size:11px; font-weight:800; transition:all .15s; }
+.prep.done .pb { background:var(--blue); border-color:var(--blue); }
+.prep.done { color:var(--g400); }
+
+/* Success-Moment (seltene Aktionen → Delight erlaubt) */
+.cele { position:fixed; inset:0; z-index:300; display:flex; align-items:center; justify-content:center;
+  pointer-events:none; opacity:0; transition:opacity .22s var(--ease-out); }
+.cele.open { opacity:1; }
+.cele .cele-card { background:rgba(10,14,26,.94); backdrop-filter:blur(10px); color:var(--white);
+  border-radius:24px; padding:26px 34px; display:flex; flex-direction:column; align-items:center; gap:12px;
+  transform:scale(.95); transition:transform .3s var(--ease-out); box-shadow:var(--sh-lg); }
+.cele.open .cele-card { transform:scale(1); }
+.cele svg { width:54px; height:54px; }
+.cele .ring-c { stroke:var(--blue); stroke-dasharray:151; stroke-dashoffset:151; fill:none; stroke-width:3; }
+.cele .check-c { stroke:#fff; stroke-dasharray:36; stroke-dashoffset:36; fill:none; stroke-width:3.4;
+  stroke-linecap:round; stroke-linejoin:round; }
+.cele.open .ring-c { animation:drawRing .5s var(--ease-out) forwards; }
+.cele.open .check-c { animation:drawCheck .32s .28s var(--ease-out) forwards; }
+@keyframes drawRing { to{stroke-dashoffset:0} }
+@keyframes drawCheck { to{stroke-dashoffset:0} }
+.cele b { font-family:var(--fh); font-size:15px; }
+
+/* Press-Feedback auf tappbaren Karten */
+.bcard, .ecard, .artcard { transition:transform .16s var(--ease-out); }
+.bcard:active, .ecard:active, .artcard:active { transform:scale(.985); }
+.heart { transition:transform .16s var(--ease-out), background .15s, color .15s, border-color .15s; }
+.heart:active { transform:scale(.86); }
+
+/* Carousel: Karten faden an den Rändern ein (Scroll-driven, progressive enhancement) */
+@supports (animation-timeline: view()) {
+  .hscroll > * { animation:hpeek linear both; animation-timeline:view(inline); animation-range:entry 0% entry 45%; }
+  @keyframes hpeek { from{opacity:.45; transform:scale(.96)} to{opacity:1; transform:none} }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .view-anim > *, .sheet-root.open .sh-body > * { animation:none; opacity:1; }
+  .sheet, .sheet-root.open .sheet { transition:opacity .2s; }
+  .hscroll > * { animation:none; }
+  .cele.open .ring-c, .cele.open .check-c { animation-duration:.01s; }
+}
+.consent-summary { border:1px solid var(--line); border-radius:15px; margin:15px 0; overflow:hidden; }
+.consent-summary .row { display:flex; padding:11px 15px; border-bottom:1px solid var(--line); font-size:13px; line-height:1.45; }
+.consent-summary .row:nth-child(odd) { background:var(--g50); }
+.consent-summary .row:last-child { border-bottom:none; }
+.consent-summary .row b { width:104px; color:var(--g600); font-weight:600; flex-shrink:0; }
+.consent-check { display:flex; gap:11px; align-items:flex-start; margin:15px 0 8px;
+  background:var(--blue-tint); padding:14px 15px; border-radius:15px; border:1px solid rgba(72,147,244,.2); }
+.consent-check input { width:19px; height:19px; accent-color:var(--blue); margin-top:1px; flex-shrink:0; }
+.consent-check span { font-size:13.5px; line-height:1.5; }
+.fine { font-size:11.5px; color:var(--g400); line-height:1.55; margin-top:10px; }
+.reason-chips { display:flex; flex-wrap:wrap; gap:9px; margin:15px 0; }
+.reason-chips div { border:1.5px solid var(--line-strong); border-radius:99px; padding:11px 17px; font-size:13px;
+  font-weight:600; user-select:none; background:var(--white); }
+.reason-chips div.sel { background:var(--black); color:var(--white); border-color:var(--black); }
+.meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin:15px 0; }
+.meta-grid > div { background:var(--g50); border:1px solid var(--line); border-radius:12px; padding:10px 13px; }
+.meta-grid .l { font-size:9.5px; color:var(--g400); font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+.meta-grid .v { font-size:13px; font-weight:700; margin-top:3px; }
+.note-box { background:var(--g50); border:1px solid var(--line); border-radius:15px; padding:14px 16px;
+  display:flex; gap:12px; margin:15px 0; }
+.note-box img { width:38px; height:38px; border-radius:50%; object-fit:cover; flex-shrink:0; }
+.note-box p { font-size:13px; line-height:1.55; font-style:italic; color:var(--g700); }
+.note-box .nn { font-size:10px; font-weight:800; color:var(--g400); margin-top:6px; font-style:normal; text-transform:uppercase; letter-spacing:.08em; }
+.opt-row { display:flex; align-items:center; gap:13px; padding:16px 4px; border-bottom:1px solid var(--line); font-weight:700; font-size:14.5px; }
+.opt-row:last-child { border-bottom:none; }
+.opt-row .od { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.notif-item { padding:14px 2px; border-bottom:1px solid var(--line); font-size:13.5px; line-height:1.5; }
+.notif-item:last-child { border-bottom:none; }
+.notif-item b { display:block; }
+.notif-item time { color:var(--g400); font-size:11.5px; }
+
+/* Chat im Sheet */
+.chat-wrap { display:flex; flex-direction:column; height:74dvh; }
+.chat-msgs { flex:1; overflow-y:auto; padding:14px 4px; display:flex; flex-direction:column; gap:11px; }
+.msg { max-width:82%; padding:11px 15px; font-size:14px; line-height:1.5; border-radius:17px; }
+.msg.them { background:var(--g100); align-self:flex-start; border-bottom-left-radius:6px; }
+.msg.me { background:var(--blue); color:var(--white); align-self:flex-end; border-bottom-right-radius:6px; }
+.msg time { display:block; font-size:10.5px; opacity:.55; margin-top:4px; }
+.chat-input { display:flex; gap:9px; padding:10px 0 4px; }
+.chat-input input { flex:1; border:1.5px solid var(--line-strong); border-radius:99px; padding:12px 17px;
+  font-family:var(--fb); font-size:14px; outline:none; }
+.chat-input input:focus { border-color:var(--blue); box-shadow:0 0 0 3px var(--blue-soft); }
+.chat-input button { width:48px; height:48px; border-radius:50%; background:var(--blue); color:var(--white);
+  flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+
+/* ---------- Snackbar ---------- */
+.snack-root { position:fixed; left:14px; right:14px; bottom:calc(86px + env(safe-area-inset-bottom)); z-index:200;
+  display:flex; flex-direction:column; gap:9px; pointer-events:none; }
+@media (min-width:540px) { .snack-root { width:372px; left:auto; right:auto; margin:0 auto; position:fixed;
+  left:50%; transform:translateX(-50%); } }
+.snack { background:rgba(10,14,26,.96); backdrop-filter:blur(8px); color:var(--white); border-radius:16px;
+  padding:13px 16px; display:flex; gap:11px; align-items:flex-start; font-size:13px; line-height:1.45;
+  animation:snackIn .35s cubic-bezier(.2,.9,.25,1.2); box-shadow:var(--sh-lg); }
+.snack .ic { width:24px; height:24px; border-radius:50%; background:var(--blue); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; margin-top:1px; }
+.snack b { display:block; font-family:var(--fh); font-size:13.5px; }
+.snack span { color:rgba(255,255,255,.7); }
+.snack.out { animation:snackOut .3s forwards; }
+@keyframes snackIn { from{opacity:0; transform:translateY(14px) scale(.97)} to{opacity:1; transform:none} }
+@keyframes snackOut { to{opacity:0; transform:translateY(14px)} }
+
+/* Prozess-Gruppierung nach «wer ist am Zug» */
+.ghead { display:flex; align-items:center; gap:8px; font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+  font-weight:800; color:var(--g600); margin:20px 0 10px; }
+.ghead:first-child { margin-top:4px; }
+.ghead .gdot { width:8px; height:8px; border-radius:99px; flex-shrink:0; }
+.ghead .gcnt { margin-left:auto; background:var(--g100); color:var(--g600); min-width:20px; height:20px;
+  border-radius:99px; display:flex; align-items:center; justify-content:center; font-size:11px; padding:0 6px; }
+.pstats { display:flex; gap:8px; margin:16px 0 4px; }
+.pstats > div { flex:1; background:var(--white); border:1px solid var(--line); border-radius:14px; padding:10px 12px; text-align:center;
+  cursor:pointer; transition:transform .15s var(--ease-out), border-color .15s; }
+.pstats > div:active { transform:scale(.96); }
+.pstats > div.zero { opacity:.45; pointer-events:none; }
+.pstats b { font-family:var(--fh); font-size:18px; display:block; }
+.pstats span { font-size:10px; color:var(--g600); font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+.origin { font-size:11px; color:var(--g400); margin-top:2px; }
+
+@keyframes lpulse { 0%,100%{box-shadow:0 0 0 0 rgba(72,147,244,.5)} 60%{box-shadow:0 0 0 6px rgba(72,147,244,0)} }
+
+/* Consultant-Video-Teaser */
+.vid-teaser { position:relative; height:140px; border-radius:16px; overflow:hidden; margin:14px 0 0; cursor:pointer; }
+.vid-teaser img { width:100%; height:100%; object-fit:cover; object-position:center 25%; }
+.vid-teaser::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,14,26,.1), rgba(10,14,26,.68)); }
+.vid-teaser .vt-play { position:absolute; left:50%; top:42%; transform:translate(-50%,-50%); width:46px; height:46px;
+  border-radius:99px; background:rgba(255,255,255,.92); display:flex; align-items:center; justify-content:center;
+  z-index:1; box-shadow:var(--sh-md); transition:transform .18s var(--ease-out); }
+.vid-teaser:active .vt-play { transform:translate(-50%,-50%) scale(.9); }
+.vid-teaser .vt-play::before { content:''; width:0; height:0; border-left:14px solid var(--black);
+  border-top:9px solid transparent; border-bottom:9px solid transparent; margin-left:3px; }
+.vid-teaser .vt-label { position:absolute; left:14px; right:14px; bottom:10px; z-index:1; color:var(--white); }
+.vid-teaser .vt-label b { font-size:12.5px; display:block; }
+.vid-teaser .vt-label span { font-size:11px; color:rgba(255,255,255,.7); }
+
+/* Voice-Note (realistischer als Video pro Vorschlag: 30 Sek Aufwand statt Video-Setup) */
+.vnote { display:flex; align-items:center; gap:11px; margin-top:11px; padding:10px 13px;
+  background:var(--blue-tint); border:1px solid rgba(72,147,244,.22); border-radius:14px; cursor:pointer; }
+.vnote .vn-play { width:34px; height:34px; border-radius:99px; background:var(--blue); color:var(--white);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:transform .15s var(--ease-out); }
+.vnote:active .vn-play { transform:scale(.9); }
+.vnote .vn-play::before { content:''; width:0; height:0; border-left:10px solid #fff;
+  border-top:6px solid transparent; border-bottom:6px solid transparent; margin-left:2px; }
+.vnote .vn-wave { flex:1; display:flex; align-items:center; gap:2.5px; height:22px; }
+.vnote .vn-wave i { width:3px; border-radius:99px; background:rgba(72,147,244,.55); }
+.vnote .vn-meta { text-align:right; flex-shrink:0; }
+.vnote .vn-meta b { font-size:11px; display:block; color:var(--blue-dark); }
+.vnote .vn-meta span { font-size:10.5px; color:var(--g600); }
+
+/* Lohn-Benchmark + Marktwert */
+.bench { display:flex; align-items:flex-start; gap:6px; font-size:11.5px; color:var(--blue-dark); font-weight:700;
+  margin-top:5px; line-height:1.4; }
+.bench .kstar { width:10px; height:10px; margin:2px 0 0; }
+
+/* Vergleich (Apple-Pattern: sticky Spalten-Header mit CTA, Kategorien, Diff-Highlight) */
+.cmp { display:grid; grid-template-columns:76px 1fr 1fr; font-size:12.5px; margin-top:6px; }
+.cmp > div { padding:10px 9px; border-bottom:1px solid var(--line); min-width:0; }
+.cmp > div:nth-child(3n+1) { font-weight:700; color:var(--g600); font-size:11px; }
+.cmp .csub { grid-column:1/-1; padding:14px 0 5px; border-bottom:none;
+  font-size:10px; letter-spacing:.12em; text-transform:uppercase; font-weight:800; color:var(--g400); }
+.cmp .win { color:var(--blue-dark); font-weight:800; position:relative; }
+.cmp .win::before { content:'✓ '; font-size:10px; }
+.cmp-head { position:sticky; top:-5px; z-index:5; display:grid; grid-template-columns:76px 1fr 1fr;
+  background:var(--white); padding:6px 0 10px; border-bottom:1px solid var(--line-strong); gap:0; }
+.cmp-head .c2h { padding:0 6px; display:flex; flex-direction:column; gap:7px; align-items:flex-start; min-width:0; }
+.cmp-head .c2h .logo-tile { width:34px; height:34px; font-size:14px; border-radius:10px; }
+.cmp-head .c2h b { font-size:13px; line-height:1.2; }
+.cmp-head .c2h .btn { min-height:32px; font-size:11.5px; padding:0 12px; width:auto; }
+
+/* Übungs-Interview (Mock) */
+.mic { width:74px; height:74px; border-radius:99px; background:linear-gradient(180deg,#5BA0F6,#4893F4);
+  margin:18px auto 8px; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 10px var(--blue-soft);
+  animation:lpulse 2s infinite; }
+.qcard { background:var(--g50); border:1px solid var(--line); border-radius:16px; padding:16px 18px; margin-top:14px; }
+.qcard .qn { font-size:10px; letter-spacing:.12em; text-transform:uppercase; font-weight:800; color:var(--blue); }
+.qcard p { font-family:var(--fh); font-size:16px; font-weight:700; margin-top:6px; line-height:1.4; }
+
+/* Rim-Light auf Dark-Flächen (Linear-Pattern) */
+.cosmic { box-shadow:inset 0 1px 0 rgba(255,255,255,.08), var(--sh-sm); border:1px solid rgba(255,255,255,.06); }
+
+.proto-note { text-align:center; font-size:10.5px; color:var(--g400); margin-top:30px; font-weight:600; letter-spacing:.06em; }
+.proto-note a { color:var(--g400); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="rstar" viewBox="0 0 384 391">
+    <path d="M73.5395 150.575L7.5625 164.123L90.4221 193.124C109.134 187.652 126.254 177.756 140.334 164.271C154.414 150.786 165.04 134.109 171.314 115.65L209.879 0.537109H162.22L128.165 101.025C123.992 113.229 116.792 124.176 107.239 132.841C97.686 141.507 86.0914 147.608 73.5395 150.575Z"/>
+    <path d="M309.461 239.361L374.526 226L292.536 196.709C273.805 202.173 256.665 212.068 242.567 225.557C228.469 239.046 217.827 255.732 211.541 274.203L171.727 390.828H220.117L254.69 288.828C258.886 276.621 266.113 265.679 275.692 257.027C285.271 248.375 296.891 242.296 309.461 239.361Z"/>
+    <path d="M274.62 176.138L383.891 216.305V167.749L290.259 133.362C267.846 125.076 252.393 106.433 241.579 74.8633L221.113 4.82617L196.027 81.1192L198.327 88.9495C213.614 134.419 238.659 162.922 274.62 176.138Z"/>
+    <path d="M108.381 213.798L0.808594 174.336V222.892L92.6585 256.657C116.025 265.254 133.239 285.658 141.131 314.369L162.003 382.337L174.215 345.278L186.426 308.219L184.23 301.259C172.278 258.213 145.792 227.553 108.381 213.798Z"/>
+  </symbol>
+</svg>
+
+<div class="app">
+  <header class="topbar">
+    <div class="tb-logo">
+      <div class="logo-star">
+        <svg fill="#000000"><use href="#rstar"/></svg>
+        <svg class="ls-accent" fill="#4893F4"><use href="#rstar"/></svg>
+      </div>
+      <div class="wm"><b>rocken</b><span>talent</span></div>
+    </div>
+    <div class="tb-right">
+      <button class="bell" onclick="App.openNotifs()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <span class="badge">3</span>
+      </button>
+      <button style="padding:0;border-radius:50%" onclick="App.go('profil')"><img class="tb-avatar" src="img/hannah-seier.jpg" alt="Profil"></button>
+    </div>
+  </header>
+  <main class="main"><div class="view-anim" id="view"></div></main>
+  <nav class="tabbar" id="tabbar"></nav>
+</div>
+
+<div class="sheet-root" id="sheetRoot">
+  <div class="sheet-bg" onclick="App.closeSheet()"></div>
+  <div class="sheet" id="sheetPanel"></div>
+</div>
+<div class="snack-root" id="snackRoot"></div>
+<div class="cele" id="cele">
+  <div class="cele-card">
+    <svg viewBox="0 0 54 54">
+      <circle class="ring-c" cx="27" cy="27" r="24"/>
+      <path class="check-c" d="M17 27.5l7 7 14-14"/>
+    </svg>
+    <b id="celeMsg"></b>
+    <span id="celeSub" style="font-size:12px;color:rgba(255,255,255,.65);text-align:center;max-width:230px;line-height:1.45;margin-top:-4px"></span>
+  </div>
+</div>
+
+<script>
+/* ================= DATA (identisch zum Desktop-Prototyp) ================= */
+const C = {
+  blerta: { key:'blerta', name:'Blerta Avdili',  img:'img/blerta-avdili.jpg',
+    role:'Consultant · IT & HR-Tech',
+    about:'Ich bin seit sechs Jahren im IT-Recruiting und seit 2022 bei Rocken. Mein Fokus: SAP, HR-Tech und Business Analysis im Raum Zürich/Ostschweiz. Ich schlage dir nur vor, was ich selbst geprüft habe — Team, Lohnband, Erwartungen. Und wenn etwas nicht passt, sage ich es dir gerade heraus.',
+    cFacts:[['Fokus','SAP · HR-Tech · BA'],['Region','ZH / Ostschweiz'],['Bei Rocken seit','2022'],['Sprachen','DE · EN · ALB']] },
+  muqsit: { key:'muqsit', name:'Muqsit Bebou',   img:'img/muqsit-bebou.jpg',
+    role:'Consultant · ICT & Healthcare',
+    about:'Ich betreue ICT-Profile im Gesundheitswesen — vom Erstgespräch bis zur Unterschrift. Mein Anspruch: Du weisst immer, wo dein Prozess steht, bevor du fragen musst. Spitäler ticken anders als Konzerne — genau dafür bin ich da.',
+    cFacts:[['Fokus','ICT · Healthcare'],['Region','Ostschweiz'],['Bei Rocken seit','2021'],['Sprachen','DE · EN · FR']] },
+};
+
+const state = {
+  view:'cockpit', jobTab:'match', appTab:'aktiv', profilTab:'persoenlich',
+  status:'Aktiv auf Suche', declineReason:null, pendingId:null,
+  profile:{ name:'Hannah Seier', geburtstag:'20. Mai 1999', nationalitaet:'Österreich',
+            wohnort:'Zürich', arbeitsweg:'ÖV', email:'hannah.seier@gmail.com',
+            phone:'+41 44 785 21 66', ueberMich:'' },
+  proposals:[
+    { id:'p1', title:'SAP HCM Consultant:in 80–100%', company:'Helvetia Versicherungen', initial:'H',
+      location:'St. Gallen', workload:'80–100 %', model:'Hybrid', salary:"CHF 105'000–120'000", start:'Ab sofort oder n. V.',
+      consultant:C.blerta, deadline:'Fr, 13. Juni', urgent:true,
+      why:'Deine <b>SAP-HCM-Zertifizierung</b> plus 4 Jahre Applikationsmanagement — die suchen exakt dieses Profil.',
+      note:'Ich kenne den Hiring Manager persönlich — starkes Team, viel Gestaltungsspielraum.',
+      jobId:'233305', workplace:'St. Gallen, Girtannerstrasse — 5 Min ab HB',
+      commute:'34 Min ÖV ab Zürich HB', benchmark:'+8 % über dem Median für SAP-HCM-Rollen (Rocken-Placements, Raum ZH/Ost)',
+      voice:{ dur:'0:28' },
+      vRole:'Du verantwortest Betrieb und Weiterentwicklung der SAP-HCM-Landschaft und gestaltest die HR-IT-Roadmap aktiv mit — als Schnittstelle zwischen HR-Fachbereich, IT und externen Partnern.',
+      vTasks:['Betrieb & Weiterentwicklung der SAP-HCM-Module (PA, PT, PY)','Schnittstellen- & Integrationsprojekte (Payroll, Zeitwirtschaft)','Customizing & 2nd-Level-Support','Key-User-Schulungen & Dokumentation','Mitarbeit an der S/4HANA-Roadmap 2027','Steuerung externer Implementierungspartner'],
+      vBring:['SAP-HCM-Zertifizierung & 3+ Jahre Praxis','Erfahrung im Applikationsmanagement','Customizing-Kenntnisse PA/PT, idealerweise PY','Prozessverständnis im HR-Umfeld','Deutsch verhandlungssicher'],
+      vNice:['SuccessFactors-Erfahrung','Versicherungs- oder Spitalumfeld'],
+      vBenefits:['6 Wochen Ferien','Hybrid + bis 4 Wochen Workation (EU)','Weiterbildungsbudget CHF 5\'000/Jahr','Überdurchschnittliche Pensionskasse','13. Monatslohn + Erfolgsbeteiligung','Vergünstigte Versicherungsprodukte'],
+      coAbout:'Eine der führenden Schweizer Versicherungen — Allbranchen-Versicherer mit Hauptsitz in St. Gallen und starkem internem IT-Standort.',
+      coFacts:[['Mitarbeitende',"~14'000"],['Gegründet','1858'],['Branche','Versicherung'],['Standorte','14 in der Schweiz']],
+      coLocs:['St. Gallen (HQ)','Zürich','Basel','Bern','Lausanne','+ 9 weitere'],
+      coValues:['Eigenverantwortung','Hybrid als Standard','Lernkultur mit Budget'],
+      coProjects:['SAP S/4HANA-Migration bis 2027','HR-Self-Service für 14\'000 Mitarbeitende','Neue Zeitwirtschaft (Ablösung Legacy)'],
+      coImg:'img/office-1.jpg', coGallery:['img/office-2.jpg','img/office-3.jpg'] },
+    { id:'p2', title:'ICT Business Analyst:in 100%', company:'SIX Group', initial:'S',
+      location:'Zürich', workload:'100 %', model:'Hybrid', salary:"CHF 110'000–125'000", start:'01.09.2026',
+      consultant:C.blerta, deadline:'Mo, 16. Juni', urgent:false,
+      why:'Schnittstelle <b>IT / Fachbereich</b> — dein Wunschprofil aus unserem letzten Gespräch.',
+      note:'Die Rolle ist neu geschaffen — du könntest sie selbst prägen.',
+      jobId:'233512', workplace:'Zürich, Hardturmstrasse — Tram 4/17 ab HB',
+      commute:'12 Min ab Zürich HB', benchmark:'+12 % über dem Median für BA-Rollen in Zürich (Rocken-Placements)',
+      vRole:'Du übersetzt zwischen HR-Fachbereich und IT — von der Anforderung bis zum Rollout. Die Rolle ist neu geschaffen, du prägst sie selbst.',
+      vTasks:['Anforderungen zwischen IT und Fachbereich übersetzen','Prozessanalysen, Fachkonzepte & Priorisierung','Testing & Abnahmen verantworten','Rollout neuer HR- und Workforce-Tools begleiten','Stakeholder-Workshops moderieren'],
+      vBring:['Erfahrung als Business Analyst:in','HR-System-Kenntnisse (SAP HCM von Vorteil)','Sichere Stakeholder-Kommunikation','Strukturierte, selbständige Arbeitsweise'],
+      vNice:['Workday-Kenntnisse','Finanzbranchen-Erfahrung'],
+      vBenefits:['Flexible Arbeitsmodelle','Zentrale Lage beim Hardbrücke-Hub','Top-Pensionskasse','Interne Academy','Sabbatical-Option ab Jahr 3'],
+      coAbout:'SIX betreibt die Infrastruktur des Schweizer Finanzplatzes — Börse, Zahlungsverkehr und Finanzinformationen.',
+      coFacts:[['Mitarbeitende',"~4'400"],['Gegründet','2008'],['Branche','Finanzinfrastruktur'],['Standorte','19 Länder']],
+      coLocs:['Zürich (HQ)','Genf','Madrid','Warschau','+ 15 international'],
+      coValues:['Stabilität trifft Innovation','International (20+ Nationen im Team)','Flexible Modelle'],
+      coProjects:['Workday-Einführung in der Gruppe','HR-Analytics-Plattform','Skills-Taxonomie für interne Mobilität'],
+      coImg:'img/office-4.jpg', coGallery:['img/office-5.jpg','img/office-6.jpg'] },
+  ],
+  tasks:[
+    { id:'t1', appId:'hoch', title:'Interview bestätigen', date:'Do, 18. Juni, 14:00',
+      sub:'ICT Applikationsmanager/in SAP HCM — HOCH Health Ostschweiz · Video (MS Teams)' },
+  ],
+  applications:[
+    { id:'hoch', title:'ICT Applikationsmanager/in SAP HCM 80–100%', company:'HOCH Health Ostschweiz', initial:'H',
+      stage:3, owner:'dir', archived:false, consultant:C.muqsit, confirmed:false,
+      origin:'via Vorschlag von Muqsit',
+      appt:{ m:'JUN', d:'18', label:'Erstgespräch (Video) · 14:00' },
+      next:'Interview am Do, 18. Juni, 14:00 — bitte bestätige den Termin.',
+      timeline:[
+        { d:'02.06.2026', t:'Vorschlag freigegeben — du hast der Einreichung zugestimmt' },
+        { d:'03.06.2026', t:'Dossier bei HOCH Health eingereicht' },
+        { d:'06.06.2026', t:'Dossier in Prüfung beim Hiring Manager' },
+        { d:'10.06.2026', t:'Interview-Einladung erhalten' },
+        { d:'18.06.2026', t:'Erstgespräch (Video) — 14:00', future:true },
+      ]},
+    { id:'selmoni', title:'Business Controller 80–100%', company:'Selmoni Gruppe', initial:'S',
+      stage:2, owner:'firma', archived:false, consultant:C.blerta, confirmed:true,
+      origin:'via Vorschlag von Blerta', sla:'Rückmeldung bis Fr, 13. Juni',
+      next:'Dein Dossier liegt beim Hiring Manager.',
+      timeline:[
+        { d:'26.05.2026', t:'Vorschlag freigegeben' },
+        { d:'27.05.2026', t:'Dossier bei Selmoni eingereicht' },
+        { d:'04.06.2026', t:'Dossier in Prüfung beim Hiring Manager' },
+        { d:'13.06.2026', t:'Rückmeldung der Firma erwartet', future:true },
+      ]},
+    { id:'ticos', title:'Elektroplaner:in / Sachbearbeiter:in', company:'Ticos Engineering AG', initial:'T',
+      stage:4, owner:null, archived:true, result:'Abgeschlossen', consultant:C.blerta, timeline:[] },
+    { id:'bona', title:'Fachspezialist:in Finanzen 80–100%', company:'bonainvest AG', initial:'B',
+      stage:4, owner:null, archived:true, result:'Absage durch Firma', consultant:C.blerta,
+      feedback:'Der Entscheid fiel auf ein internes Talent — dein Dossier war in der Endrunde.', timeline:[] },
+  ],
+  jobs:[
+    { id:'j1', score:92, title:'SAP Applikationsmanager:in HCM 80–100%', company:'Kantonsspital Aarau', initial:'K',
+      location:'Aarau', workload:'80–100 %', model:'Hybrid', salary:"CHF 100'000–115'000", level:'Professional', posted:'09. Juni',
+      reason:'Deine SAP-HCM-Erfahrung + 28 Min ÖV-Pendelzeit', saved:false, applied:false, interest:false, match:true,
+      criteria:[['SAP-HCM-Skills',1],['4 J. relevante Erfahrung',1],['Lohnband ≥ CHF 100k',1],['Pendelzeit unter 45 Min',1],['Pensum 80–100 %',1]],
+      jobId:'233871', workplace:'Aarau, Tellstrasse — 10 Min ab Bahnhof',
+      commute:'28 Min ÖV ab Zürich HB', benchmark:'auf Median-Niveau für SAP-Rollen im Gesundheitswesen',
+      vTasks:['Betrieb & Weiterentwicklung SAP HCM im Spitalumfeld','Dienstplanungs- & Zeitwirtschafts-Projekte','Schnittstellen zu Lohn & Fachapplikationen','Support & Schulung der HR-Key-User'],
+      vBring:['SAP-HCM-Erfahrung (PA/PT)','Verständnis für Schichtbetriebe von Vorteil','Selbständige, strukturierte Arbeitsweise','Deutsch stilsicher'],
+      vBenefits:['Geregelte Arbeitszeiten, planbar','Personalrestaurant & Vergünstigungen','Weiterbildung aktiv gefördert','ÖV-Beitrag'],
+      coAbout:'Eines der grössten Zentrumsspitäler der Schweiz — Maximalversorgung für den Kanton Aargau, mitten in der digitalen Transformation.',
+      coFacts:[['Mitarbeitende',"~5'000"],['Gegründet','1887'],['Branche','Gesundheitswesen'],['Standorte','2 Standorte']],
+      coLocs:['Aarau (Hauptstandort)','Zofingen'],
+      coValues:['Sinn im Job — Versorgung zählt','Geregelte Modelle, planbar','Du-Kultur in der ICT'],
+      coProjects:['SAP-HCM-Konsolidierung beider Standorte','Neue Dienstplanung (Polypoint-Ablösung)','Mobile Self-Services fürs Personal'],
+      coImg:'img/office-7.jpg', coGallery:['img/office-8.jpg','img/office-1.jpg'] },
+    { id:'j2', score:88, title:'Business Analyst:in HR-Systeme 80–100%', company:'Migros-Genossenschafts-Bund', initial:'M',
+      location:'Zürich', workload:'80–100 %', model:'Hybrid', salary:"CHF 105'000–120'000", level:'Professional', posted:'08. Juni',
+      reason:'HR-Tech-Fokus wie in deinem Wunschprofil', saved:true, applied:false, interest:false, match:true,
+      criteria:[['HR-Tech-Fokus',1],['Business-Analysis-Erfahrung',1],['Lohnband ≥ CHF 100k',1],['Standort Zürich',1],['SAP-HCM-Tiefe',0]],
+      vTasks:['Anforderungen für HR-Systeme aufnehmen & priorisieren','Harmonisierung der HR-Suite über die Genossenschaften','Testing, Schulung & Rollout-Begleitung'],
+      coAbout:'Grösste private Arbeitgeberin der Schweiz — Detailhandel, Industrie und Dienstleistungen unter einem Dach.',
+      coFacts:[['Mitarbeitende',"~99'000"],['Gegründet','1925'],['Branche','Detailhandel'],['Standort','Zürich (MGB)']],
+      coValues:['Stabilität & Sozialpartnerschaft','Interne Mobilität gross geschrieben','Vielfalt im Alltag'],
+      coProjects:['HR-Suite-Harmonisierung gruppenweit','Skills-basiertes Staffing (Pilot)','People-Analytics-Ausbau'],
+      coImg:'img/office-2.jpg', coGallery:['img/office-3.jpg','img/office-4.jpg'] },
+    { id:'j3', score:84, title:'Consultant:in HR-Digitalisierung 60–100%', company:'Abraxas Informatik', initial:'A',
+      location:'St. Gallen', workload:'60–100 %', model:'Hybrid', salary:"CHF 95'000–110'000", level:'Professional', posted:'06. Juni',
+      reason:'Beratungsrolle + dein gewünschter Pensum-Spielraum', saved:false, applied:false, interest:false, match:true,
+      criteria:[['Beratungsrolle',1],['Pensum-Spielraum',1],['HR-Digitalisierung',1],['Lohnband ≥ CHF 100k',0],['Pendelzeit unter 45 Min',0]],
+      vTasks:['Kund:innen der öffentlichen Hand in HR-Digitalisierung beraten','Fachkonzepte & Einführungsprojekte leiten','Workshops & Schulungen durchführen'],
+      coAbout:'Die IT-Dienstleisterin der öffentlichen Hand in der Schweiz — von Kantonen und Städten getragen.',
+      coFacts:[['Mitarbeitende',"~1'200"],['Gegründet','2000'],['Branche','Public IT'],['Standort','St. Gallen + ZH']],
+      coValues:['Wirkung für die Öffentlichkeit','60–100 % wirklich gelebt','Beratung ohne Verkaufsdruck'],
+      coProjects:['eGov-HR-Fachlösungen nächste Generation','Cloud-Transformation der Fachapps','Kantons-Rollouts 2026/27'],
+      coImg:'img/office-5.jpg', coGallery:['img/office-6.jpg','img/office-7.jpg'] },
+    { id:'j4', score:81, title:'ICT Projektleiter:in HR-Software 100%', company:'Helsana', initial:'H',
+      location:'Dübendorf', workload:'100 %', model:'Hybrid', salary:"CHF 110'000–125'000", level:'Professional', posted:'05. Juni',
+      reason:'Projektleitung mit SAP-Bezug — leicht über deinem Wunschpensum', saved:false, applied:false, interest:false, match:true,
+      criteria:[['SAP-Bezug',1],['Projektleitung',1],['Lohnband ≥ CHF 100k',1],['Pensum 80–100 %',0],['Standort-Wunsch',1]],
+      vTasks:['Teilprojekte im konzernweiten HR-Software-Rollout führen','Stakeholder von HR bis IT orchestrieren','Budget-, Termin- & Qualitätsverantwortung'],
+      coAbout:'Führende Schweizer Kranken- und Unfallversicherung mit Hauptsitz in Dübendorf.',
+      coFacts:[['Mitarbeitende',"~3'500"],['Gegründet','1996'],['Branche','Versicherung'],['Standort','Dübendorf']],
+      coValues:['Gesundheit auch intern gelebt','Klare Strukturen, kurze Wege','Entwicklungspfade sichtbar'],
+      coProjects:['HR-Software-Rollout konzernweit','Workforce-Planning datengetrieben','Onboarding-Journey neu'],
+      coImg:'img/office-8.jpg', coGallery:['img/office-1.jpg','img/office-2.jpg'] },
+    { id:'j5', score:null, title:'Fachspezialist:in HR-Services 80%', company:'Stadt Winterthur', initial:'W',
+      location:'Winterthur', workload:'80 %', level:'Professional', posted:'04. Juni', saved:false, applied:false, interest:false, match:false },
+    { id:'j6', score:null, title:'Application Manager:in ERP 100%', company:'Emmi Group', initial:'E',
+      location:'Luzern', workload:'100 %', level:'Professional', posted:'02. Juni', saved:false, applied:false, interest:false, match:false },
+  ],
+  events:[
+    { d:'13', m:'JUN', title:'Antwortfrist: Vorschlag Helvetia', sub:'Freigabe offen', count:'In 2 Tagen', type:'deadline' },
+    { d:'18', m:'JUN', title:'Interview: HOCH Health', sub:'14:00 · Video (MS Teams)', count:'In 7 Tagen', type:'interview' },
+    { d:'25', m:'JUN', title:'Rocken Career Night Zürich', sub:'18:00 · Networking + CV-Check', count:'In 2 Wochen', type:'event' },
+  ],
+  articles:[
+    { cat:'Interview', time:'6 Min', title:'Die 7 Interview-Fragen, die immer kommen — und wie du sie drehst' },
+    { cat:'CV & Dossier', time:'8 Min', title:'Dein CV in 2026: Was Recruiter:innen wirklich lesen' },
+    { cat:'Gehalt', time:'5 Min', title:'Gehaltsverhandlung ohne Pokerface — mit echten DACH-Benchmarks' },
+    { cat:'CV & Dossier', time:'7 Min', title:'Arbeitszeugnis entschlüsselt: Das steht wirklich drin' },
+    { cat:'Arbeitsmarkt', time:'4 Min', title:'Remote, hybrid, vor Ort: Was du heute verhandeln kannst' },
+    { cat:'Karriere', time:'5 Min', title:'Nach der Absage: So machst du aus Feedback deinen Vorsprung' },
+  ],
+  docs:[
+    { name:'CV_Hannah_Seier.pdf', meta:'PDF · 240 KB · 12.05.2026', send:true },
+    { name:'Diplom_BSc_Wirtschaftsinformatik.pdf', meta:'PDF · 1.2 MB · 03.04.2026', send:true },
+  ],
+  checklist:[
+    { id:'zeugnis',   label:'Arbeitszeugnis hochladen', pts:10, done:false },
+    { id:'uebermich', label:'«Über mich»-Text ergänzen', pts:5,  done:false },
+    { id:'referenz',  label:'Referenz hinterlegen',      pts:10, done:false },
+    { id:'sprachen',  label:'Sprachen ergänzen',         pts:5,  done:false },
+  ],
+  activeChat:'blerta',
+  chats:{
+    blerta:[{ who:'them', text:'Hoi Hannah! Ich habe dir zwei Vorschläge geschickt — beide Teams kenne ich persönlich. Sag mir, wenn du Fragen hast.', time:'09:40' }],
+    muqsit:[{ who:'them', text:'Hoi Hannah! Ich begleite deinen Prozess bei HOCH Health. Fragen zum Interview am 18.? Direkt hier.', time:'08:15' }],
+  },
+};
+
+const STAGES = ['Freigegeben','Eingereicht','In Prüfung','Interview','Entscheidung'];
+/* Otta-Pattern: Jobs mit Lohnband ranken vor Jobs ohne, danach nach Score */
+const rankedMatches = () => state.jobs.filter(j=>j.match)
+  .slice().sort((a,b)=>((b.salary?1:0)-(a.salary?1:0))||((b.score||0)-(a.score||0)));
+const completeness = () => 100 - state.checklist.filter(c=>!c.done).reduce((s,c)=>s+c.pts,0);
+const actionCount  = () => state.proposals.length + state.tasks.length;
+const $ = id => document.getElementById(id);
+const STAR = '<svg class="kstar" fill="currentColor"><use href="#rstar"/></svg>';
+
+function ring(pct, size, stroke) {
+  const r=(size-stroke)/2, c=2*Math.PI*r, off=c*(1-pct/100);
+  return `<svg width="${size}" height="${size}">
+    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="#EEF0F2" stroke-width="${stroke}"/>
+    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="#4893F4" stroke-width="${stroke}" stroke-linecap="round"
+      stroke-dasharray="${c}" stroke-dashoffset="${off}" style="transition:stroke-dashoffset .8s cubic-bezier(.2,.7,.2,1)"/>
+  </svg>`;
+}
+/* Firmen-Block für Detail-Ansichten: About, Fakten, Werte, Projekte, Galerie */
+function coBlock(x){
+  if(!x.coAbout) return `
+    <div class="co-hero"><div class="logo-tile">${x.initial}</div>
+    <div class="ch-b"><b>${x.company}</b><span>Publiziert ${x.posted||''} 2026 · Ø 29 Tage Prozess mit Rocken</span></div></div>`;
+  return `
+    <div class="sect">${STAR}Über ${x.company.split(' ')[0]}</div>
+    <div class="co-hero">
+      <div class="logo-tile">${x.initial}</div>
+      <div class="ch-b"><b>${x.company}</b><span>${x.coAbout}</span></div>
+    </div>
+    <div class="meta-grid" style="margin:10px 0 0">${x.coFacts.map(([l,v])=>`<div><div class="l">${l}</div><div class="v">${v}</div></div>`).join('')}</div>
+    ${x.coLocs?`<div class="ssub">Standorte</div><div class="tagrow" style="margin-bottom:0">${x.coLocs.map(l=>`<span class="chip">${l}</span>`).join('')}</div>`:''}
+    ${x.coValues?`<div class="ssub">Werte & Kultur</div><div class="tagrow" style="margin-bottom:0">${x.coValues.map(v=>`<span class="chip">${v}</span>`).join('')}</div>`:''}
+    ${x.coProjects?`<div class="ssub">Aktuelle Projekte</div>${x.coProjects.map(t=>`<div class="blt">${t}</div>`).join('')}`:''}
+    ${x.coGallery?`<div class="ssub">Einblick</div><div class="gallery">${x.coGallery.map(g=>`<img src="${g}" alt="" loading="lazy">`).join('')}</div>`:''}`;
+}
+const coCover = x => x.coImg?`<div class="sheet-cover"><img src="${x.coImg}" alt=""><div class="sc-co">${x.company}</div></div>`:'';
+
+function celebrate(msg, sub) {
+  $('celeMsg').textContent = msg;
+  $('celeSub').textContent = sub || '';
+  const c=$('cele'); c.classList.remove('open'); void c.offsetWidth; c.classList.add('open');
+  setTimeout(()=>c.classList.remove('open'), sub ? 1600 : 1100);
+}
+function countUp(el, to, ms=650) {
+  const t0=performance.now();
+  const tick=now=>{ const p=Math.min(1,(now-t0)/ms), e=1-Math.pow(1-p,3);
+    el.textContent=Math.round(to*e)+'%'; if(p<1) requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+}
+function snack(title, msg) {
+  const el=document.createElement('div'); el.className='snack';
+  el.innerHTML=`<div class="ic"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l5 5L20 6"/></svg></div>
+    <div><b>${title}</b><span>${msg||''}</span></div>`;
+  $('snackRoot').appendChild(el);
+  setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),320); }, 3400);
+}
+
+/* ================= TABS ================= */
+const TABS = [
+  { id:'cockpit',     label:'Home',        icon:'M3 12l9-8 9 8M5 10v10h5v-6h4v6h5V10' },
+  { id:'jobs',        label:'Jobs',        icon:'M10.5 17.5L4 11l6.5-6.5M4 11h13a4 4 0 014 4v5' },
+  { id:'bewerbungen', label:'Prozesse',    icon:'M4 4h16v16H4zM4 9h16M9 4v16' },
+  { id:'termine',     label:'Termine',     icon:'M5 5h14v15H5zM3 9h18M8 3v4M16 3v4' },
+  { id:'profil',      label:'Profil',      icon:'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c0-4 3.5-6 8-6s8 2 8 6' },
+];
+function renderTabs() {
+  $('tabbar').innerHTML = TABS.map(t=>`
+    <div class="tab-item ${state.view===t.id?'active':''}" onclick="App.go('${t.id}')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="${t.icon}"/></svg>
+      ${t.label}
+      ${t.id==='cockpit'&&actionCount()>0?`<span class="tab-badge">${actionCount()}</span>`:''}
+    </div>`).join('');
+}
+
+/* ================= VIEWS ================= */
+function vCockpit() {
+  const n = actionCount();
+  const sub = n>0
+    ? `${n===1?'Eine Sache wartet':n+' Dinge warten'} auf dich — danach bist du auf dem neusten Stand.`
+    : 'Du bist auf dem neusten Stand. Wir melden uns, sobald es Neues gibt.';
+
+  const tasks = state.tasks.map(t=>`
+    <div class="acard" id="card-${t.id}">
+      <div class="ahead">
+        <div class="date-block"><div class="m">JUN</div><div class="d">18</div></div>
+        <div class="who"><b>Interview · HOCH Health Ostschweiz</b><span>${t.date} · Video (MS Teams)</span></div>
+        <span class="chip blue">In 7 Tagen</span>
+      </div>
+      <h3>${t.title}</h3>
+      <div class="metaline">ICT Applikationsmanager/in SAP HCM · Erstgespräch, 45 Min</div>
+      <div class="cta">
+        <button class="btn btn-primary" onclick="App.confirmInterview('${t.id}')">Termin bestätigen</button>
+        <div class="split">
+          <button class="btn btn-ghost btn-sm" onclick="App.info('Verschieben','Im Ausbau: Self-Scheduling — du wählst direkt aus 3 Slot-Vorschlägen.')">Verschieben</button>
+          <button class="btn btn-link" onclick="App.openPrep()">Prep-Guide →</button>
+        </div>
+        <div style="font-size:11px;color:var(--g400);text-align:center">Mit Bestätigung: Kalender-Eintrag + Prep-Guide</div>
+      </div>
+    </div>`).join('');
+
+  const proposals = state.proposals.map(p=>`
+    <div class="acard" id="card-${p.id}">
+      <div class="ahead">
+        <img src="${p.consultant.img}" alt="">
+        <div class="who"><b>Vorschlag von ${p.consultant.name.split(' ')[0]}</b><span>Antwortet i. d. R. in ~2 Std.</span></div>
+        <span class="chip ${p.urgent?'amber':''}">bis ${p.deadline.split(', ')[1]}</span>
+      </div>
+      <h3>${p.title}</h3>
+      <div class="salband">${p.salary}</div>
+      <div class="metaline">${p.company} · ${p.location} · ${p.workload} · ${p.model}</div>
+      <div class="why">${p.why}</div>
+      <div class="quote">«${p.note}»<b>— ${p.consultant.name.split(' ')[0]}</b></div>
+      <div class="cta">
+        <button class="btn btn-primary" onclick="App.openConsent('${p.id}')">Einreichen erlauben</button>
+        <div class="split">
+          <button class="btn btn-ghost btn-sm" onclick="App.openProposal('${p.id}')">Details</button>
+          <button class="btn btn-danger btn-sm" onclick="App.openDecline('${p.id}')">Ablehnen</button>
+        </div>
+      </div>
+    </div>`).join('');
+
+  const done = `
+    <div class="cosmic" style="padding:22px 20px;display:flex;gap:14px;align-items:center">
+      <svg class="star-wm" fill="currentColor"><use href="#rstar"/></svg>
+      <div style="width:42px;height:42px;background:var(--blue);border-radius:99px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 0 6px rgba(72,147,244,.2);position:relative">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l5 5L20 6"/></svg>
+      </div>
+      <div style="position:relative"><h3 style="font-size:16px">Alles erledigt. Stark.</h3>
+      <p style="color:rgba(255,255,255,.6);font-size:12.5px;margin-top:3px">Blerta meldet sich, sobald ein neuer Match bereitsteht.</p></div>
+    </div>`;
+
+  const apps = state.applications.filter(a=>!a.archived).map(bCard).join('');
+  const events = state.events.map(e=>eCard(e,false)).join('');
+  const matches = rankedMatches().slice(0,4).map(j=>mCard(j,true)).join('');
+  const arts = state.articles.slice(0,4).map(artCard).join('');
+
+  return `
+    <div class="greet">
+      <div class="eyebrow">${STAR}Rocken Talent</div>
+      <h1>Hoi Hannah.</h1><p>${sub}</p>
+    </div>
+    <div class="sec" style="margin-top:22px"><h2>${STAR}Warten auf dich</h2>${state.proposals.length>1?`<span class="more" onclick="App.openCompare()">Vergleichen ⇄</span>`:''}</div>
+    <div style="display:flex;flex-direction:column;gap:13px">${n>0 ? tasks+proposals : done}</div>
+    <div class="sec"><h2>Deine Prozesse</h2><span class="more" onclick="App.go('bewerbungen')">Alle →</span></div>
+    ${apps || '<div class="card" style="padding:20px;font-size:13.5px;color:var(--g600)">Noch keine aktiven Bewerbungen.</div>'}
+    <div class="sec"><h2>Nächste Termine</h2><span class="more" onclick="App.go('termine')">Kalender →</span></div>
+    <div class="hscroll">${events}</div>
+    <div class="sec"><h2>Für dich gematcht</h2><span class="more" onclick="App.go('jobs')">Alle Jobs →</span></div>
+    <div class="hscroll">${matches}</div>
+    <div class="sec"><h2>Karriere-Hub</h2><span class="more" onclick="App.openHub()">Alle Artikel →</span></div>
+    <div class="cosmic" style="padding:20px;margin-bottom:14px">
+      <svg class="star-wm" fill="currentColor"><use href="#rstar"/></svg>
+      <div style="position:relative">
+        <span class="kicker blue">${STAR}Für dich relevant</span>
+        <h3 style="font-size:16px;margin-top:8px">Dein Interview ist in 7 Tagen.</h3>
+        <p style="color:rgba(255,255,255,.6);font-size:12.5px;margin-top:5px;line-height:1.5">HOCH Health, Do 18. Juni — der Prep-Guide ist bereit.</p>
+        <button class="btn btn-primary btn-sm" style="margin-top:14px" onclick="App.openPrep()">Jetzt vorbereiten</button>
+      </div>
+    </div>
+    <div class="hscroll">${arts}</div>
+    <div class="sec"><h2>Dein Consultant</h2></div>
+    <div class="card ccard">
+      <img src="${C.blerta.img}" alt="">
+      <div class="cb"><b>Blerta Avdili</b><span><i class="dot-online"></i>Erreichbar · antwortet in ~2 Std.</span>
+        <span class="more" style="font-size:11.5px;margin-top:3px;display:block" onclick="App.openConsultant('blerta')">Lerne Blerta kennen →</span>
+      </div>
+      <button onclick="App.openChat('blerta')">Chat</button>
+    </div>
+    <div class="proto-note">Prototyp v5 mobile · 11.06.2026 · <a href="index.html">Desktop-Version</a></div>`;
+}
+
+function bCard(a) {
+  const ownerChip = a.owner==='dir' ? '<span class="chip amber">Liegt bei dir</span>'
+    : a.owner==='firma' ? '<span class="chip">Liegt bei der Firma</span>'
+    : a.owner==='fixiert' ? '<span class="chip blue">Termin fixiert</span>'
+    : '<span class="chip blue">Liegt bei Rocken</span>';
+  const segs = STAGES.map((s,i)=>`<i class="${i<a.stage?'done':i===a.stage?'cur':''}"></i>`).join('');
+  return `
+    <div class="card bcard" onclick="App.openApp('${a.id}')">
+      <div class="bhead">
+        <div class="logo-tile">${a.initial}</div>
+        <div class="bt"><h3>${a.title}</h3><div class="co">${a.company}</div>${a.origin?`<div class="origin">${a.origin}</div>`:''}</div>
+      </div>
+      <div class="steps">${segs}</div>
+      <div class="steplabel"><span>Schritt ${a.stage+1} von 5 · <b>${STAGES[a.stage]}</b></span>${ownerChip}</div>
+      ${a.appt?`
+      <div class="appt">
+        <div class="date-block"><div class="m">${a.appt.m}</div><div class="d">${a.appt.d}</div></div>
+        <div class="ab"><b>${a.appt.label}</b><span>${a.confirmed?'Bestätigt — liegt in deinem Kalender':'Bitte bestätige den Termin'}</span></div>
+        ${a.confirmed?'<span class="chip blue">✓ Fixiert</span>':`<button class="btn btn-primary btn-sm" style="width:auto;padding:0 16px;flex-shrink:0" onclick="event.stopPropagation();App.confirmInterview('t1')">Bestätigen</button>`}
+      </div>`
+      :`${a.sla?`<div class="sla-line">◷ ${a.sla}</div>`:''}
+      <div class="nextbox"><span class="arrow">→</span><span>${a.next}</span></div>`}
+    </div>`;
+}
+
+function eCard(e, full) {
+  const btn = e.type==='interview' ? `<button class="btn btn-primary btn-sm" style="width:auto;padding:0 16px" onclick="App.openPrep()">Vorbereiten</button>`
+    : e.type==='deadline' ? `<button class="btn btn-dark btn-sm" style="width:auto;padding:0 16px" onclick="App.go('cockpit')">Antworten</button>`
+    : `<button class="btn btn-ghost btn-sm" style="width:auto;padding:0 16px" onclick="App.info('Angemeldet','Du bist dabei — die Bestätigung kommt per Mail.')">Anmelden</button>`;
+  return `
+    <div class="card ecard ${full?'full':''}">
+      <div class="date-block"><div class="m">${e.m}</div><div class="d">${e.d}</div></div>
+      <div class="eb"><span class="countdown">${e.count}</span><b>${e.title}</b><span>${e.sub}</span></div>
+      ${full?btn:''}
+    </div>`;
+}
+
+const matchLabel = s => s>=90?'Sehr starker Match':s>=80?'Starker Match':'Guter Match';
+
+function mCard(j, carousel) {
+  return `
+    <div class="card mcard ${carousel?'carousel':'list'}">
+      <div class="mhead">
+        ${j.score?`<div class="score-ring">${ring(j.score,46,4.5)}<div class="sval">${j.score}</div></div>`:`<div class="logo-tile">${j.initial}</div>`}
+        <div class="mt">${j.score?`<div class="mlabel">${matchLabel(j.score)}</div>`:''}<h3>${j.title}</h3><div class="co">${j.company}</div></div>
+      </div>
+      ${j.salary?`<div class="salband" style="margin-top:9px">${j.salary}</div>`:''}
+      <div class="metaline">${j.location} · ${j.workload}${j.model?' · '+j.model:''} · ${j.posted}</div>
+      ${j.reason?`<div class="mreason">${j.reason}</div>`:'<div style="height:11px"></div>'}
+      <div class="split">
+        ${j.interest
+          ? '<button class="btn btn-ghost btn-sm" disabled style="color:var(--blue-dark);border-color:rgba(72,147,244,.3);background:var(--blue-tint)">✓ Interesse gemeldet</button>'
+          : j.applied
+          ? '<button class="btn btn-ghost btn-sm" disabled style="color:var(--blue-dark);border-color:rgba(72,147,244,.3);background:var(--blue-tint)">✓ Beworben</button>'
+          : `<button class="btn btn-primary btn-sm" onclick="App.openInterest('${j.id}')">Interesse melden</button>`}
+        <button class="btn btn-ghost btn-sm" style="flex:0 0 auto;width:auto;padding:0 14px" onclick="App.openJob('${j.id}')">Details</button>
+        <button class="heart ${j.saved?'on':''}" style="width:38px;height:38px" onclick="App.toggleSave('${j.id}')">${j.saved?'♥':'♡'}</button>
+      </div>
+    </div>`;
+}
+
+function artCard(a,i) {
+  return `
+    <div class="card artcard" onclick="App.info('Artikel','Im Prototyp nur Teaser — Inhalte produziert das Content-Team.')">
+      <span class="kicker ${i===0?'blue':''}">${a.cat}</span>
+      <h3>${a.title}</h3>
+      <div class="af"><span>${a.time} Lesezeit</span><span class="read">Lesen →</span></div>
+    </div>`;
+}
+
+function vJobs() {
+  const t=state.jobTab;
+  const matched=rankedMatches(), saved=state.jobs.filter(j=>j.saved);
+  const list = t==='match'?matched : t==='saved'?saved : state.jobs;
+  return `
+    <div class="greet"><h1>Jobs</h1><p>Aus 7'815 Vakanzen zeigen wir dir zuerst, was wirklich passt.</p></div>
+    <input class="search" placeholder="Jobtitel, Firma oder Skill …" onkeydown="if(event.key==='Enter')App.info('Suche','«'+this.value+'» — im Prototyp statisch; im Ausbau Volltext über alle Vakanzen.')">
+    <div class="seg">
+      <button class="${t==='match'?'on':''}" onclick="App.setJobTab('match')">Für dich<span class="cnt">${matched.length}</span></button>
+      <button class="${t==='all'?'on':''}" onclick="App.setJobTab('all')">Alle<span class="cnt">7'815</span></button>
+      <button class="${t==='saved'?'on':''}" onclick="App.setJobTab('saved')">♥<span class="cnt">${saved.length}</span></button>
+    </div>
+    ${list.map(j=>mCard(j,false)).join('')||'<div class="card" style="padding:20px;font-size:13.5px;color:var(--g600)">Noch nichts gespeichert — tippe auf das Herz bei einem Job.</div>'}
+    ${t==='all'?'<div class="card" style="padding:14px 16px;font-size:12px;color:var(--g600)">Beispiel-Auszug im Prototyp — im Ausbau durchsuchst du hier alle 7\'815 Vakanzen.</div>':''}`;
+}
+
+function vBewerbungen() {
+  const t=state.appTab;
+  const active=state.applications.filter(a=>!a.archived);
+  const arch=state.applications.filter(a=>a.archived);
+  const archCards = arch.map(a=>`
+    <div class="card bcard">
+      <div class="bhead">
+        <div class="logo-tile" style="background:var(--g100);color:var(--g400)">${a.initial}</div>
+        <div class="bt"><h3 style="color:var(--g600)">${a.title}</h3><div class="co">${a.company}</div></div>
+        <span class="chip ${a.result==='Abgeschlossen'?'':'red'}">${a.result}</span>
+      </div>
+      ${a.feedback?`<div class="nextbox" style="margin-top:12px"><span class="arrow">→</span><span>${a.feedback}</span></div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:11px" onclick="App.go('jobs')">3 ähnliche Jobs ansehen</button>`:''}
+    </div>`).join('');
+  /* Gruppierung nach «wer ist am Zug» — sortiert nach Handlungsrelevanz, nicht nach Pipeline-Stufe */
+  const GROUPS = [
+    ['dir',     'Du bist am Zug',                 'var(--amber)'],
+    ['fixiert', 'Termin steht — bereite dich vor','var(--blue)'],
+    ['firma',   'Bei der Firma — wir haken nach', 'var(--g400)'],
+    ['rocken',  'Bei deinem Consultant',          'var(--blue)'],
+  ];
+  const grouped = GROUPS.map(([key,label,col])=>{
+    const items = active.filter(a=>a.owner===key);
+    if(!items.length) return '';
+    return `<div class="ghead" id="grp-${key}"><span class="gdot" style="background:${col}"></span>${label}<span class="gcnt">${items.length}</span></div>`
+      + items.map(bCard).join('');
+  }).join('');
+  const n=k=>active.filter(a=>k==='rocken'?(a.owner==='rocken'||a.owner==='fixiert'):a.owner===k).length;
+  const stats = `
+    <div class="pstats">
+      <div onclick="App.setAppTab('aktiv')"><b>${active.length}</b><span>Aktiv</span></div>
+      <div class="${n('dir')?'':'zero'}" onclick="App.goGroup('dir')"><b style="color:var(--amber)">${n('dir')}</b><span>Bei dir</span></div>
+      <div class="${n('firma')?'':'zero'}" onclick="App.goGroup('firma')"><b>${n('firma')}</b><span>Bei Firmen</span></div>
+      <div class="${n('rocken')?'':'zero'}" onclick="App.goGroup('rocken')"><b style="color:var(--blue-dark)">${n('rocken')}</b><span>Bei Rocken</span></div>
+    </div>`;
+  return `
+    <div class="greet"><h1>Prozesse</h1><p>Jede Bewerbung mit klarem Status — und wer gerade am Zug ist.</p></div>
+    ${stats}
+    <div class="seg">
+      <button class="${t==='aktiv'?'on':''}" onclick="App.setAppTab('aktiv')">Aktiv<span class="cnt">${active.length}</span></button>
+      <button class="${t==='archiv'?'on':''}" onclick="App.setAppTab('archiv')">Abgeschlossen<span class="cnt">${arch.length}</span></button>
+    </div>
+    ${t==='aktiv' ? (grouped || '<div class="card" style="padding:20px;font-size:13.5px;color:var(--g600)">Noch keine aktiven Prozesse.</div>') : archCards}`;
+}
+
+function vTermine() {
+  return `
+    <div class="greet"><h1>Termine</h1><p>Interviews, Fristen und Events — exportierbar in deinen Kalender.</p></div>
+    <div style="margin-top:18px">${state.events.map(e=>eCard(e,true)).join('')}</div>
+    <button class="btn btn-ghost" style="margin-top:6px" onclick="App.info('Kalender-Export','Konzept: ICS-Feed — abonnierbar in Google / Outlook / Apple Kalender.')">⤓ In meinen Kalender exportieren</button>`;
+}
+
+function vProfil() {
+  const pct=completeness();
+  const t=state.profilTab;
+  const tabs=[['persoenlich','Persönlich'],['beruflich','Beruflich'],['dokumente','Dokumente'],['anforderungen','Suchkriterien'],['vorschau','Vorschau']];
+  const checklist = state.checklist.map(c=>`
+    <div class="check-item ${c.done?'done':''}" onclick="${c.done?'':'App.checklistAction(\''+c.id+'\')'}">
+      <div class="box">${c.done?'✓':''}</div>
+      <div class="lbl">${c.label}</div>
+      <div class="pts">+${c.pts} %</div>
+      ${c.done?'':'<div class="go">›</div>'}
+    </div>`).join('');
+
+  let body='';
+  if(t==='persoenlich') body=tPersoenlich();
+  if(t==='beruflich') body=tBeruflich();
+  if(t==='dokumente') body=tDokumente();
+  if(t==='anforderungen') body=tAnforderungen();
+  if(t==='vorschau') body=tVorschau();
+
+  return `
+    <div class="card phero">
+      <img src="img/hannah-seier.jpg" alt="">
+      <h1>${state.profile.name}</h1>
+      <div class="role">Wirtschaftsinformatikerin · SAP HCM · Zürich</div>
+      <button class="status-pill" onclick="App.openStatus()">
+        <i class="dot-online" style="background:${state.status==='Nicht auf der Suche'?'var(--g400)':'var(--green)'}"></i>
+        ${state.status} <span style="color:var(--g400)">▾</span>
+      </button>
+    </div>
+    ${pct<100?`
+    <div class="card ringrow">
+      <div class="ring-box">${ring(pct,62,6)}<div class="rv">${pct}%</div></div>
+      <div class="rb"><b>${STAR}Bewerbungsbereit werden</b>
+      <span>Dein Profil wird 1:1 als Dossier eingereicht — je kompletter, desto stärker dein Auftritt.</span></div>
+    </div>
+    <div class="card" style="margin-top:12px;overflow:hidden">${checklist}</div>`
+    :`<div class="cosmic" style="padding:20px;margin-top:12px;display:flex;gap:13px;align-items:center">
+      <svg class="star-wm" fill="currentColor"><use href="#rstar"/></svg>
+      <div style="width:40px;height:40px;background:var(--blue);border-radius:99px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l5 5L20 6"/></svg></div>
+      <div style="position:relative"><h3 style="font-size:15px">Profil komplett — bewerbungsbereit.</h3>
+      <p style="color:rgba(255,255,255,.6);font-size:12px;margin-top:3px">Blerta kann dich jederzeit einreichen.</p></div>
+    </div>`}
+    <div class="card" style="margin-top:12px;padding:16px 18px;cursor:pointer" onclick="App.openMarktwert()">
+      <span class="kicker blue">${STAR}Dein Rocken-Marktwert</span>
+      <div class="salband" style="font-size:18px;margin-top:7px">CHF 108'000–118'000</div>
+      <p style="font-size:12px;color:var(--g600);line-height:1.5;margin-top:5px">Aus 1'200 echten Rocken-Placements in deinem Feld — nicht aus Selbstangaben.</p>
+      <span class="more" style="display:inline-block;margin-top:9px;font-size:12.5px">Wie setzt sich das zusammen? →</span>
+    </div>
+    <div class="chiptabs">
+      ${tabs.map(([id,l])=>`<button class="${t===id?'on':''}" onclick="App.setProfilTab('${id}')">${l}</button>`).join('')}
+    </div>
+    ${body}
+    <div class="proto-note">Prototyp v5 mobile · <a href="index.html">Desktop-Version</a></div>`;
+}
+
+function tPersoenlich() {
+  const p=state.profile;
+  const rows=[['Name',p.name],['Geburtstag',p.geburtstag],['Nationalität',p.nationalitaet],
+    ['Wohnort',p.wohnort],['Arbeitsweg',p.arbeitsweg],['E-Mail',p.email],['Telefon',p.phone]];
+  return `
+    <div class="card" style="overflow:hidden">
+      ${rows.map(([l,v])=>`<div class="frow"><div class="fl">${l}</div><div class="fv">${v}</div></div>`).join('')}
+    </div>
+    <div class="card" style="margin-top:12px;padding:18px">
+      <b style="font-family:var(--fh);font-size:15px">Über mich</b>
+      ${state.profile.ueberMich
+        ? `<p style="font-size:13.5px;line-height:1.6;color:var(--g700);margin-top:10px">${state.profile.ueberMich}</p>
+           <button class="btn btn-ghost btn-sm" style="margin-top:13px" onclick="App.openUeberMich()">Bearbeiten</button>`
+        : `<div class="dropzone" style="margin-top:12px" onclick="App.openUeberMich()">
+             <b>Erzähl in 3–4 Sätzen, wer du bist.</b>
+             <span>Firmen lesen das zuerst. <b style="color:var(--blue)">+5 %</b></span>
+           </div>`}
+    </div>`;
+}
+function tBeruflich() {
+  return `
+    <div class="card" style="padding:18px">
+      <b style="font-family:var(--fh);font-size:15px">Berufserfahrung</b>
+      <div class="tl" style="margin-top:10px">
+        <div class="tl-item"><div class="tld">2023 – heute</div><div class="dot"></div>
+          <div><b>SAP HCM Applikationsmanagerin</b><br><span style="color:var(--g600);font-size:12px">Spital Limmattal, Schlieren</span></div></div>
+        <div class="tl-item"><div class="tld">2021 – 2023</div><div class="dot"></div>
+          <div><b>ICT Business Analystin</b><br><span style="color:var(--g600);font-size:12px">Raiffeisen Schweiz, St. Gallen</span></div></div>
+      </div>
+      <b style="font-family:var(--fh);font-size:15px;display:block;margin-top:16px">Ausbildung</b>
+      <div class="tl" style="margin-top:6px">
+        <div class="tl-item"><div class="tld">2018 – 2021</div><div class="dot"></div>
+          <div><b>BSc Wirtschaftsinformatik</b><br><span style="color:var(--g600);font-size:12px">FH St. Pölten</span></div></div>
+      </div>
+    </div>`;
+}
+function tDokumente() {
+  const rows = state.docs.map(d=>`
+    <div class="doc-row">
+      <div class="doc-icon">PDF</div>
+      <div class="db"><b>${d.name}</b><span>${d.meta}</span></div>
+      ${d.send?'<span class="chip blue">Im Dossier</span>':'<span class="chip">Intern</span>'}
+    </div>`).join('');
+  return `
+    <div class="card" style="padding:18px">
+      <b style="font-family:var(--fh);font-size:15px">Deine Dokumente</b>
+      <p style="font-size:12.5px;color:var(--g600);margin:7px 0 13px;line-height:1.5">Diese Unterlagen reichen wir mit deiner Freigabe bei Firmen ein.</p>
+      <div class="dropzone" onclick="$('fileInput').click()">
+        <b>Dokument hochladen</b>
+        <span>Dein Arbeitszeugnis fehlt noch <b style="color:var(--blue)">+10 %</b></span>
+      </div>
+      <input type="file" id="fileInput" multiple hidden onchange="App.handleUpload(this.files)">
+      <div style="border:1px solid var(--line);border-radius:15px;margin-top:14px;overflow:hidden">${rows}</div>
+    </div>`;
+}
+function tAnforderungen() {
+  return `
+    <div class="card" style="padding:18px">
+      <b style="font-family:var(--fh);font-size:15px">Was du suchst</b>
+      <p style="font-size:12.5px;color:var(--g600);margin:7px 0 4px;line-height:1.5">Diese Kriterien steuern dein Matching.</p>
+      <div class="meta-grid">
+        <div><div class="l">Region</div><div class="v">ZH / Ost · max. 45 Min</div></div>
+        <div><div class="l">Pensum</div><div class="v">80–100 %</div></div>
+        <div><div class="l">Modell</div><div class="v">Hybrid (2+ Tage remote)</div></div>
+        <div><div class="l">Gehalt</div><div class="v">ab CHF 100'000</div></div>
+        <div><div class="l">Rollen</div><div class="v">SAP HCM · HR-Tech · BA</div></div>
+        <div><div class="l">No-Gos</div><div class="v">100 % vor Ort</div></div>
+      </div>
+    </div>`;
+}
+function tVorschau() {
+  return `
+    <div class="cosmic" style="padding:20px">
+      <svg class="star-wm" style="right:auto;left:-30px;top:auto;bottom:-34px" fill="currentColor"><use href="#rstar"/></svg>
+      <div style="display:flex;gap:13px;align-items:center;position:relative">
+        <img src="img/hannah-seier.jpg" style="width:52px;height:52px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2.5px rgba(255,255,255,.25)">
+        <div><h3 style="font-size:16px">Hannah S.</h3>
+        <div style="color:rgba(255,255,255,.55);font-size:12px;margin-top:2px">Wirtschaftsinformatikerin · Raum Zürich</div></div>
+      </div>
+      <div style="margin-top:14px;position:relative"><span class="kicker blue">${STAR}Rocken Dossier · verifiziert</span></div>
+    </div>
+    <div class="card" style="padding:18px;margin-top:12px">
+      <p style="font-size:13px;color:var(--g600);line-height:1.6">
+        <b style="color:var(--black)">So sehen Firmen dein Dossier</b> — anonymisiert bis zu deiner Freigabe.
+        Name, Foto und Kontaktdaten werden erst nach deiner Einwilligung übermittelt.</p>
+      <div class="tagrow" style="margin-top:12px"><span class="chip blue">SAP HCM</span><span class="chip blue">Business Analysis</span><span class="chip">4 J. Erfahrung</span><span class="chip">DE C2 · EN C1</span></div>
+      <div class="nextbox"><span class="arrow">→</span><span>Vollständigkeit <b>${completeness()} %</b> — ${completeness()<100?'lade dein Arbeitszeugnis hoch für die Endrunde-Quote.':'dein Dossier ist auf Maximal-Stand.'}</span></div>
+    </div>`;
+}
+
+/* ================= APP ================= */
+const App = {
+  /* View Transitions API: Tab-Wechsel als sanfter Crossfade (progressive enhancement) */
+  go(v){
+    const doIt=()=>{ state.view=v; render(); document.querySelector('.main').scrollTop=0; };
+    if(document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.startViewTransition(doIt);
+    else doIt();
+  },
+  setJobTab(t){ state.jobTab=t; render(); },
+  /* Stats-Kachel → springt zur Gruppe (fixiert zählt zu Rocken) */
+  goGroup(key){
+    if(state.appTab!=='aktiv'){ state.appTab='aktiv'; render(); }
+    const el=document.getElementById('grp-'+key)||document.getElementById('grp-fixiert');
+    if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  },
+  setAppTab(t){ state.appTab=t; render(); },
+  setProfilTab(t){ state.profilTab=t; render(); },
+  info(t,m){ snack(t,m); },
+
+  sheet(html, foot){
+    const p=$('sheetPanel');
+    p.style.transform=''; p.classList.remove('dragging');
+    p.innerHTML=`<div class="grab"><i></i></div><div class="sh-body">${html}</div>${foot?`<div class="sheet-foot">${foot}</div>`:''}`;
+    $('sheetRoot').classList.add('open');
+    this._bindDrag(p.querySelector('.grab'), p);
+  },
+  closeSheet(){ $('sheetRoot').classList.remove('open'); const p=$('sheetPanel'); p.classList.remove('dragging'); p.style.transform=''; },
+  /* Swipe-down-to-dismiss: Velocity-basiert (Flick reicht), Dämpfung nach oben */
+  _bindDrag(handle, panel){
+    let y0=0, t0=0, dy=0, active=false;
+    handle.onpointerdown = e=>{
+      active=true; y0=e.clientY; t0=performance.now(); dy=0;
+      panel.classList.add('dragging');
+      handle.setPointerCapture(e.pointerId);
+    };
+    handle.onpointermove = e=>{
+      if(!active) return;
+      dy=e.clientY-y0;
+      const y = dy>0 ? dy : dy/4; /* nach oben: Friction statt harter Stopp */
+      panel.style.transform=`translateY(${Math.max(y,-32)}px)`;
+    };
+    handle.onpointerup = handle.onpointercancel = ()=>{
+      if(!active) return; active=false;
+      panel.classList.remove('dragging');
+      const v=Math.abs(dy)/Math.max(1,performance.now()-t0);
+      if(dy>110 || (dy>24 && v>0.11)){ panel.style.transform=''; App.closeSheet(); }
+      else panel.style.transform='';
+    };
+  },
+
+  /* --- Consent --- */
+  openConsent(id){
+    const p=state.proposals.find(x=>x.id===id); state.pendingId=id;
+    const docs=state.docs.filter(d=>d.send).map(d=>d.name).join('<br>');
+    this.sheet(`
+      <span class="kicker blue">${STAR}Freigabe</span>
+      <h2 style="margin-top:7px">Einreichung freigeben</h2>
+      <p style="font-size:13.5px;line-height:1.55;color:var(--g700);margin-top:9px">Mit deiner Freigabe reicht <b>${p.consultant.name}</b> dein Dossier offiziell ein. Du wirst über jeden Schritt informiert.</p>
+      <div class="consent-summary">
+        <div class="row"><b>Vakanz</b><span>${p.title}</span></div>
+        <div class="row"><b>Firma</b><span>${p.company}, ${p.location}</span></div>
+        <div class="row"><b>Gehaltsband</b><span>${p.salary}</span></div>
+        <div class="row"><b>Dossier</b><span>${docs}<br>+ dein Rocken-Profil (${completeness()} %)</span></div>
+      </div>
+      <div class="consent-check">
+        <span>Mit «Einreichung freigeben» willigst du ein, dass Rocken dein Dossier bei <b>${p.company}</b> für diese Vakanz einreicht.</span>
+      </div>
+      <p class="fine">Deine Freigabe wird mit Zeitstempel dokumentiert und gilt nur für diese Vakanz. Du kannst sie jederzeit widerrufen. Sie ist nicht exklusiv — du kannst parallel weitere Vorschläge erhalten und annehmen.</p>
+      <button class="btn btn-primary" style="margin-top:16px" onclick="App.confirmConsent()">Einreichung freigeben</button>
+      <button class="btn btn-ghost btn-sm" style="margin-top:9px" onclick="App.closeSheet()">Abbrechen</button>`);
+  },
+  confirmConsent(){
+    const p=state.proposals.find(x=>x.id===state.pendingId);
+    this.closeSheet();
+    const card=$('card-'+p.id); if(card) card.classList.add('leaving');
+    setTimeout(()=>{
+      state.proposals=state.proposals.filter(x=>x.id!==p.id);
+      const now=new Date(), ds=now.toLocaleDateString('de-CH',{day:'2-digit',month:'2-digit',year:'numeric'});
+      state.applications.unshift({
+        id:'app-'+p.id, title:p.title, company:p.company, initial:p.initial,
+        stage:1, owner:'rocken', archived:false, consultant:p.consultant, confirmed:true,
+        origin:'via Vorschlag von '+p.consultant.name.split(' ')[0],
+        next:`Dossier geht heute an ${p.company} — wir bestätigen dir den Eingang.`,
+        timeline:[
+          { d:ds, t:'Freigabe erteilt — dokumentiert um '+now.toLocaleTimeString('de-CH',{hour:'2-digit',minute:'2-digit'})+' Uhr' },
+          { d:ds, t:'Dossier wird bei '+p.company+' eingereicht', future:true },
+        ]});
+      render();
+      celebrate('Freigabe erteilt', `Dein Dossier geht heute an ${p.company}. ${p.consultant.name.split(' ')[0]} hält dich auf dem Laufenden.`);
+    },360);
+  },
+
+  /* --- Decline --- */
+  openDecline(id){
+    const p=state.proposals.find(x=>x.id===id); state.pendingId=id; state.declineReason=null;
+    const reasons=['Gehalt passt nicht','Standort / Pendelzeit','Rolle passt nicht','Falscher Zeitpunkt','Anderes'];
+    this.sheet(`
+      <span class="kicker">Vorschlag ablehnen</span>
+      <h2 style="margin-top:7px">${p.title}</h2>
+      <p style="font-size:13.5px;color:var(--g700);margin-top:9px">Kein Problem — dein Feedback macht die nächsten Vorschläge besser. Was passt nicht?</p>
+      <div class="reason-chips">${reasons.map(r=>`<div onclick="App.pickReason(this,'${r}')">${r}</div>`).join('')}</div>
+      <p class="fine" style="margin-top:2px">Dein Profil geht <b>nicht</b> an diese Firma. ${p.consultant.name.split(' ')[0]} passt die nächsten Vorschläge an.</p>
+      <textarea placeholder="Optional: Sag ${p.consultant.name.split(' ')[0]} kurz, was du stattdessen suchst …"></textarea>
+      <button class="btn btn-dark" id="declineBtn" disabled style="margin-top:14px" onclick="App.confirmDecline()">Ablehnen & Feedback senden</button>
+      <button class="btn btn-ghost btn-sm" style="margin-top:9px" onclick="App.closeSheet()">Abbrechen</button>`);
+  },
+  pickReason(el,r){
+    state.declineReason=r;
+    el.parentElement.querySelectorAll('div').forEach(c=>c.classList.remove('sel'));
+    el.classList.add('sel'); $('declineBtn').disabled=false;
+  },
+  confirmDecline(){
+    const p=state.proposals.find(x=>x.id===state.pendingId);
+    this.closeSheet();
+    const card=$('card-'+p.id); if(card) card.classList.add('leaving');
+    setTimeout(()=>{
+      state.proposals=state.proposals.filter(x=>x.id!==p.id);
+      render();
+      snack('Alles klar.', `${p.consultant.name.split(' ')[0]} erhält dein Feedback («${state.declineReason}») und passt die nächsten Vorschläge an.`);
+    },360);
+  },
+
+  /* --- Details --- */
+  openProposal(id){
+    const p=state.proposals.find(x=>x.id===id);
+    this.sheet(`
+      ${coCover(p)}
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="chip blue">Vorschlag von ${p.consultant.name.split(' ')[0]}</span>
+        <span class="chip ${p.urgent?'amber':''}">Antwort bis ${p.deadline}</span>
+      </div>
+      <h2 style="margin:12px 0 2px">${p.title}</h2>
+      <div class="salband">${p.salary}</div>
+      ${p.benchmark?`<div class="bench">${STAR}${p.benchmark}</div>`:''}
+      <div class="metaline">${p.location} · ${p.workload} · ${p.model}${p.commute?' · '+p.commute:''} · Start: ${p.start}</div>
+
+      <span class="kicker" style="display:block;margin:16px 0 2px">Warum du?</span>
+      <div class="mreason" style="margin-top:6px;font-size:13.5px;line-height:1.55">${p.why}</div>
+      ${p.voice?`
+      <div class="vnote" onclick="App.info('Sprachnachricht','Konzept: optionale 30-Sek-Voice-Note des Consultants — in 30 Sekunden zwischen zwei Calls aufgenommen, persönlich wie ein Anruf. Bewusst KEIN Video pro Vorschlag: skaliert nicht bei 40+ Consultants.')">
+        <div class="vn-play"></div>
+        <div class="vn-wave">${[8,15,10,19,12,21,9,16,11,18,7,14,17,10,13,8,16,11].map(h=>`<i style="height:${h}px"></i>`).join('')}</div>
+        <div class="vn-meta"><b>${p.consultant.name.split(' ')[0]} · persönlich</b><span>${p.voice.dur}</span></div>
+      </div>`:''}
+      <div class="note-box" style="margin:12px 0 0">
+        <img src="${p.consultant.img}">
+        <div><p>«${p.note}»</p><div class="nn" style="cursor:pointer" onclick="App.openConsultant('${p.consultant.key}')">${p.consultant.name} · Lerne mich kennen →</div></div>
+      </div>
+
+      ${p.vRole?`<div class="sect">Deine Rolle</div><p class="rolep">${p.vRole}</p>`:''}
+      <div class="sect">Deine Verantwortung</div>
+      ${p.vTasks.map(t=>`<div class="blt">${t}</div>`).join('')}
+
+      <div class="sect">Das bringst du mit</div>
+      ${p.vBring.map(t=>`<div class="blt">${t}</div>`).join('')}
+      ${p.vNice?`<div class="ssub">Von Vorteil</div><div class="tagrow" style="margin-bottom:0">${p.vNice.map(n=>`<span class="chip">${n}</span>`).join('')}</div>`:''}
+
+      <div class="sect">Benefits</div>
+      <div class="tagrow" style="margin-bottom:4px">${p.vBenefits.map(b=>`<span class="chip blue">${b}</span>`).join('')}</div>
+
+      ${p.workplace?`<div class="sect">Arbeitsort</div><div class="locline">${p.workplace}</div>`:''}
+      ${coBlock(p)}
+      ${p.jobId?`<p class="fine" style="margin-top:14px">Vakanz-Nr. ${p.jobId} · Dein Dossier geht nur mit deiner Freigabe an ${p.company.split(' ')[0]}.</p>`:''}
+      <button class="btn btn-ghost btn-sm" style="margin:12px 0 6px" onclick="App.openChat('${p.consultant.key}')">Frage an ${p.consultant.name.split(' ')[0]} stellen</button>`,
+      `<button class="btn btn-primary" onclick="App.openConsent('${p.id}')">Einreichen erlauben</button>
+       <div class="split">
+         <button class="btn btn-ghost btn-sm" onclick="App.closeSheet()">Später</button>
+         <button class="btn btn-danger btn-sm" onclick="App.openDecline('${p.id}')">Ablehnen</button>
+       </div>`);
+  },
+  openJob(id){
+    const j=state.jobs.find(x=>x.id===id);
+    const crit = j.criteria ? `
+      <span class="kicker" style="display:block;margin:16px 0 4px">Warum du passt</span>
+      <div style="margin-bottom:4px">${j.criteria.map(([c,ok])=>`
+        <div class="crit ${ok?'':'miss'}"><span class="ok">${ok?'✓':'–'}</span>${c}</div>`).join('')}</div>` : '';
+    this.sheet(`
+      ${coCover(j)}
+      ${j.score?`<span class="chip blue">${matchLabel(j.score)} · ${j.score} %</span>`:'<span class="chip">Vakanz</span>'}
+      <h2 style="margin:12px 0 2px">${j.title}</h2>
+      ${j.salary?`<div class="salband">${j.salary}</div>`:''}
+      ${j.benchmark?`<div class="bench">${STAR}${j.benchmark}</div>`:''}
+      <div class="metaline">${j.location} · ${j.workload}${j.model?' · '+j.model:''}${j.commute?' · '+j.commute:''} · Publiziert ${j.posted}</div>
+      ${crit}
+      ${j.reason&&!j.criteria?`<div class="mreason">${j.reason}</div>`:''}
+      ${j.vTasks?`<div class="sect">Deine Verantwortung</div>${j.vTasks.map(t=>`<div class="blt">${t}</div>`).join('')}`:''}
+      ${j.vBring?`<div class="sect">Das bringst du mit</div>${j.vBring.map(t=>`<div class="blt">${t}</div>`).join('')}`:''}
+      ${j.vBenefits?`<div class="sect">Benefits</div><div class="tagrow" style="margin-bottom:0">${j.vBenefits.map(b=>`<span class="chip blue">${b}</span>`).join('')}</div>`:''}
+      ${j.workplace?`<div class="sect">Arbeitsort</div><div class="locline">${j.workplace}</div>`:''}
+      ${coBlock(j)}
+      ${j.jobId?`<p class="fine" style="margin-top:14px">Vakanz-Nr. ${j.jobId}</p>`:''}
+      <div style="height:6px"></div>`,
+      `${j.interest
+        ? '<button class="btn btn-ghost" disabled style="color:var(--blue-dark);border-color:rgba(72,147,244,.3);background:var(--blue-tint)">✓ Interesse gemeldet — Blerta meldet sich</button>'
+        : `<button class="btn btn-primary" onclick="App.openInterest('${j.id}')">Interesse melden</button>`}
+      <div class="split">
+        ${j.applied?'<button class="btn btn-ghost btn-sm" disabled>✓ Beworben</button>'
+          :`<button class="btn btn-ghost btn-sm" onclick="App.openApply('${j.id}')">Direkt bewerben</button>`}
+        <button class="btn btn-ghost btn-sm" onclick="App.toggleSave('${j.id}');App.openJob('${j.id}')">${j.saved?'♥ Gespeichert':'♡ Merken'}</button>
+      </div>`);
+  },
+  openPrep(){
+    const open = state.tasks.some(t=>t.id==='t1');
+    this.sheet(`
+      <span class="kicker blue">${STAR}Prep-Guide</span>
+      <h2 style="margin-top:7px">Interview bei HOCH Health</h2>
+      <div class="metaline" style="margin-top:4px">Do, 18. Juni · 14:00 · Video (MS Teams) · Erstgespräch, 45 Min<br>Mit der Leitung ICT & HR-Systeme</div>
+      <div class="sect">So läuft das Gespräch</div>
+      <div class="blt">5 Min — Kennenlernen</div>
+      <div class="blt">20 Min — Deine Erfahrung: SAP HCM, Schnittstellen, Projekte</div>
+      <div class="blt">10 Min — Team, Rolle & Erwartungen</div>
+      <div class="blt">10 Min — Deine Fragen</div>
+      <div class="sect">Deine Checkliste</div>
+      <div class="prep" onclick="this.classList.toggle('done')"><span class="pb">✓</span>Teams-Link & Technik testen — Kamera, Mikro, Licht</div>
+      <div class="prep" onclick="this.classList.toggle('done')"><span class="pb">✓</span>Vakanz & dein Dossier nochmals lesen</div>
+      <div class="prep" onclick="this.classList.toggle('done')"><span class="pb">✓</span>Ein Projekt-Beispiel parat (Situation → Aufgabe → Resultat)</div>
+      <div class="prep" onclick="this.classList.toggle('done')"><span class="pb">✓</span>2–3 eigene Fragen notieren</div>
+      <div class="prep" onclick="this.classList.toggle('done')"><span class="pb">✓</span>Dein Gehaltsband kennen — CHF 105'000–120'000 ist gesetzt</div>
+      <div class="sect">Diese Fragen kommen fast sicher</div>
+      <div class="blt">«Erzähl uns von dir» — 90 Sekunden, roter Faden Richtung SAP HCM</div>
+      <div class="blt">«Warum HOCH Health?» — verbinde das Spital-Umfeld mit deiner Erfahrung am Spital Limmattal</div>
+      <div class="blt">«Dein schwierigstes Projekt?» — Beispiel mit messbarem Resultat</div>
+      <div class="note-box">
+        <img src="${C.muqsit.img}">
+        <div><p>«Die suchen jemanden, der Systeme UND Menschen kann. Bring ein Beispiel, wo du beides gezeigt hast — das entscheidet.»</p><div class="nn">${C.muqsit.name} · Dein Consultant für diesen Prozess</div></div>
+      </div>
+      <div class="sect">${STAR}Übungs-Interview mit AI</div>
+      <p style="font-size:12.5px;color:var(--g600);line-height:1.5">5 Fragen aus diesem Inserat, Antwort per Sprache — Feedback zu Struktur, Tempo und Füllwörtern. Muqsit sieht optional deine Readiness.</p>
+      <button class="btn btn-dark btn-sm" style="margin:10px 0 6px" onclick="App.openMock()">Übungs-Interview starten · Beta</button>`,
+      `${open?`<button class="btn btn-primary" onclick="App.closeSheet();App.confirmInterview('t1')">Termin bestätigen</button>`:''}
+       <button class="btn btn-ghost btn-sm" onclick="App.closeSheet()">Alles klar</button>`);
+  },
+  /* Marktwert: Lohnrechner auf Placement-Daten — transparent, interaktiv, Consultant als Abschluss */
+  mv:{ sf:false, lead:false },
+  mvCalc(){
+    let lo=108, hi=118;
+    if(this.mv.sf){ lo=Math.round(lo*1.06); hi=Math.round(hi*1.06); }
+    if(this.mv.lead){ lo=Math.round(lo*1.08); hi=Math.round(hi*1.08); }
+    return `CHF ${lo}'000–${hi}'000`;
+  },
+  mvToggle(el,key){
+    this.mv[key]=!this.mv[key]; el.classList.toggle('sel');
+    const v=$('mvVal'); v.textContent=this.mvCalc();
+    v.style.transform='scale(1.06)'; setTimeout(()=>v.style.transform='',180);
+    $('mvHint').textContent=(this.mv.sf||this.mv.lead)?'Hypothetisch — mit diesen Hebeln':'Dein heutiger Stand';
+  },
+  openMarktwert(){
+    this.mv={sf:false,lead:false};
+    this.sheet(`
+      <span class="kicker blue">${STAR}Dein Rocken-Marktwert</span>
+      <div class="salband" id="mvVal" style="font-size:24px;margin-top:8px;transition:transform .18s var(--ease-out)">CHF 108'000–118'000</div>
+      <div class="metaline" id="mvHint">Dein heutiger Stand</div>
+
+      <div class="sect">So kommt er zustande</div>
+      <div class="crit"><span class="ok">=</span>Median SAP-HCM-Rollen, Raum ZH/Ost — 1'200 Placements<span style="margin-left:auto;font-weight:800;color:var(--g600)">CHF 102'000</span></div>
+      <div class="crit"><span class="ok">+</span>4 Jahre relevante Erfahrung<span style="margin-left:auto;font-weight:800;color:var(--blue-dark)">+6 %</span></div>
+      <div class="crit"><span class="ok">+</span>SAP-HCM-Zertifizierung<span style="margin-left:auto;font-weight:800;color:var(--blue-dark)">+5 %</span></div>
+      <div class="crit miss"><span class="ok">±</span>Spanne: Branche & Firmengrösse<span style="margin-left:auto;font-weight:800">±5 %</span></div>
+
+      <div class="sect">Was wäre wenn?</div>
+      <div class="reason-chips" style="margin-top:8px">
+        <div onclick="App.mvToggle(this,'sf')">+ SuccessFactors-Zertifikat</div>
+        <div onclick="App.mvToggle(this,'lead')">+ Führungsverantwortung</div>
+      </div>
+
+      <div class="sect">So steigerst du ihn</div>
+      <div class="blt">SuccessFactors-Zertifikat (≈ +6 %) — Kurse im <b>Karriere-Hub</b></div>
+      <div class="blt">Projektleitungs-Nachweis ins Dossier (≈ +4–6 %)</div>
+      <div class="blt">Vollständiges Profil = stärkere Verhandlungsposition — Zeugnis fehlt noch</div>
+
+      <p class="fine">Orientierung, keine Zusage: Aus echten Rocken-Abschlüssen berechnet, quartalsweise aktualisiert. Verhandelt wird mit Blerta — sie kennt die Zahl hinter der Zahl.</p>`,
+      `<button class="btn btn-primary" onclick="App.closeSheet();App.openChat('blerta')">Mit Blerta besprechen</button>
+       <button class="btn btn-ghost btn-sm" onclick="App.closeSheet()">Alles klar</button>`);
+  },
+  /* Übungs-Interview: Text = Struktur üben (niedrigste Hürde, Default) · Voice = Delivery · Video = Opt-in */
+  mockMode:'text',
+  setMockMode(m){ this.mockMode=m; this.openMock(); },
+  openMock(){
+    const m=this.mockMode;
+    const body = m==='text' ? `
+      <textarea placeholder="Schreib deine Antwort — die AI prüft Struktur (Situation → Aufgabe → Resultat) und Klarheit." style="min-height:110px;margin-top:12px"></textarea>
+      <button class="btn btn-dark btn-sm" style="margin-top:10px" onclick="App.info('Feedback','Konzept: AI prüft STAR-Struktur, Länge und Klarheit deiner Antwort.')">Antwort prüfen</button>
+      <p class="fine" style="margin-top:10px">Tipp: Sprich die Antwort danach laut (Modus «Sprechen») — Tempo und Füllwörter sieht nur die Sprach-Übung.</p>`
+    : m==='voice' ? `
+      <div class="mic" onclick="App.info('Aufnahme','Konzept: Du siehst deinen Text live als Transkript, während du sprichst — das nimmt die Hemmung. Feedback: STAR-Struktur, Tempo, Füllwörter.')">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 013 3v7a3 3 0 01-6 0V5a3 3 0 013-3zM19 10v2a7 7 0 01-14 0v-2M12 19v3"/></svg>
+      </div>
+      <p style="text-align:center;font-size:11px;color:var(--g400)">Tippen zum Sprechen — du siehst dein Transkript live</p>
+      <p class="fine" style="text-align:center">Nichts wird gespeichert oder geteilt, ausser du willst es.</p>`
+    : `
+      <div class="qcard" style="text-align:center;background:var(--cosmic);border:none;color:var(--white)">
+        <p style="font-size:14px">Kamera-Präsenz üben — dein Gespräch läuft via MS Teams.</p>
+        <button class="btn btn-ghost btn-sm" style="margin:12px auto 4px;max-width:230px;background:transparent;color:#fff;border-color:rgba(255,255,255,.3)" onclick="App.info('Video-Übung','Konzept: lokale Kamera-Vorschau + Feedback zu Blickkontakt und Bildausschnitt. Keine Aufzeichnung — alles bleibt auf deinem Gerät.')">Kamera-Übung starten</button>
+      </div>
+      <p class="fine" style="text-align:center">Opt-in & ohne Aufzeichnung — für alle, die das Video-Format selbst üben wollen.</p>`;
+    this.sheet(`
+      <span class="kicker blue">${STAR}Übungs-Interview · Beta</span>
+      <h2 style="margin-top:7px">HOCH Health — Erstgespräch üben</h2>
+      <p style="font-size:12.5px;color:var(--g600);margin-top:6px;line-height:1.5">5 Fragen aus dem Inserat. Du wählst, wie du übst:</p>
+      <div class="seg" style="margin:12px 0 4px">
+        <button class="${m==='text'?'on':''}" onclick="App.setMockMode('text')">Schreiben</button>
+        <button class="${m==='voice'?'on':''}" onclick="App.setMockMode('voice')">Sprechen</button>
+        <button class="${m==='video'?'on':''}" onclick="App.setMockMode('video')">Video</button>
+      </div>
+      <div class="qcard">
+        <div class="qn">Frage 1 von 5</div>
+        <p>«Erzähl uns von dir — was bringt dich zu HOCH Health?»</p>
+      </div>
+      ${body}
+      <button class="btn btn-ghost btn-sm" style="margin-top:14px" onclick="App.openPrep()">Zurück zum Prep-Guide</button>`);
+  },
+  openCompare(){
+    const ps=state.proposals.slice(0,2);
+    if(ps.length<2){ this.info('Vergleich','Brauchst mindestens zwei offene Vorschläge.'); return; }
+    /* Diff-Highlight: besserer Wert pro Zeile (Lohn: höheres Band · Pendelzeit: kürzer) */
+    const num=s=>{ const m=(s||'').match(/\d+/g); return m?parseInt(m[m.length-1]):null; };
+    const min1=s=>{ const m=(s||'').match(/\d+/); return m?parseInt(m[0]):null; };
+    const winSal = num(ps[0].salary)>num(ps[1].salary)?0:num(ps[1].salary)>num(ps[0].salary)?1:-1;
+    const winCom = min1(ps[0].commute)<min1(ps[1].commute)?0:min1(ps[1].commute)<min1(ps[0].commute)?1:-1;
+    const cell=(v,me,win)=>`<div class="${win===me?'win':''}">${v||'—'}</div>`;
+    const row=(l,k,win=-1)=>`<div>${l}</div>${cell(ps[0][k],0,win)}${cell(ps[1][k],1,win)}`;
+    this.sheet(`
+      <span class="kicker blue">${STAR}Vorschläge im Vergleich</span>
+      <div class="cmp-head" style="margin-top:12px">
+        <div style="align-self:end;font-size:10px;color:var(--g400);font-weight:700;padding:0 0 4px">✓ = besser</div>
+        ${ps.map(p=>`<div class="c2h">
+          <div class="logo-tile">${p.initial}</div><b>${p.company.split(' ')[0]}</b>
+          <button class="btn btn-primary" onclick="App.openConsent('${p.id}')">Freigeben</button>
+        </div>`).join('')}
+      </div>
+      <div class="cmp">
+        <div class="csub">Konditionen</div>
+        ${row('Lohnband','salary',winSal)}
+        ${row('Pensum','workload')}
+        ${row('Modell','model')}
+        <div class="csub">Alltag</div>
+        ${row('Pendelzeit','commute',winCom)}
+        ${row('Arbeitsort','location')}
+        <div class="csub">Prozess</div>
+        ${row('Antwortfrist','deadline')}
+        <div>Blerta sagt</div>
+        <div style="font-style:italic">«${ps[0].note.split('—')[0].trim()}»</div>
+        <div style="font-style:italic">«${ps[1].note.split('—')[0].trim()}»</div>
+        <div class="csub">Benefits (Auswahl)</div>
+        <div></div>
+        ${ps.map(p=>`<div>${p.vBenefits.slice(0,2).map(b=>`<span class="chip" style="font-size:10px;margin:0 3px 3px 0">${b}</span>`).join('')}</div>`).join('')}
+      </div>`,
+      `<button class="btn btn-ghost btn-sm" onclick="App.closeSheet()">Beide behalten — ich entscheide später</button>`);
+  },
+  openInterest(id){
+    const j=state.jobs.find(x=>x.id===id); state.pendingId=id;
+    this.sheet(`
+      <span class="kicker blue">${STAR}Interesse melden</span>
+      <h2 style="margin-top:7px">${j.title}</h2>
+      <div class="metaline" style="margin-top:4px">${j.company} · ${j.location}</div>
+      <p style="font-size:13.5px;line-height:1.55;color:var(--g700);margin-top:11px"><b>Blerta prüft den Match persönlich</b> und meldet sich innerhalb von 24 h bei dir — mit ehrlicher Einschätzung und den nächsten Schritten. Kein Anschreiben, keine Formulare.</p>
+      <div class="note-box">
+        <img src="${C.blerta.img}">
+        <div><p>«Ich schaue mir Vakanz und Team an, bevor irgendetwas rausgeht — versprochen.»</p><div class="nn">Blerta Avdili · Dein Consultant</div></div>
+      </div>
+      <button class="btn btn-primary" onclick="App.confirmInterest()">Interesse senden</button>
+      <button class="btn btn-ghost btn-sm" style="margin-top:9px" onclick="App.closeSheet()">Abbrechen</button>`);
+  },
+  confirmInterest(){
+    const j=state.jobs.find(x=>x.id===state.pendingId);
+    j.interest=true; this.closeSheet(); render();
+    celebrate('Interesse gesendet', 'Blerta prüft den Match und meldet sich innerhalb von 24 h bei dir.');
+  },
+  openApply(id){
+    const j=state.jobs.find(x=>x.id===id); state.pendingId=id;
+    this.sheet(`
+      <span class="kicker blue">${STAR}Bewerben</span>
+      <h2 style="margin-top:7px">${j.title}</h2>
+      <p style="font-size:13.5px;line-height:1.55;color:var(--g700);margin-top:9px">Du bewirbst dich mit deinem <b>Rocken-Dossier</b> (${completeness()} % komplett) bei <b>${j.company}</b>. Kein Anschreiben nötig — dein Consultant begleitet den Prozess.</p>
+      <div class="consent-summary">
+        <div class="row"><b>Dossier</b><span>${state.docs.filter(d=>d.send).map(d=>d.name).join('<br>')}</span></div>
+        <div class="row"><b>Begleitung</b><span>Blerta Avdili — meldet sich innerhalb von 24 h</span></div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:14px" onclick="App.confirmApply()">Bewerbung senden</button>
+      <button class="btn btn-ghost btn-sm" style="margin-top:9px" onclick="App.closeSheet()">Abbrechen</button>`);
+  },
+  confirmApply(){
+    const j=state.jobs.find(x=>x.id===state.pendingId);
+    j.applied=true; this.closeSheet();
+    const now=new Date(), ds=now.toLocaleDateString('de-CH',{day:'2-digit',month:'2-digit',year:'numeric'});
+    state.applications.unshift({
+      id:'app-'+j.id, title:j.title, company:j.company, initial:j.initial,
+      stage:1, owner:'rocken', archived:false, consultant:C.blerta, confirmed:true,
+      origin:'Direktbewerbung',
+      next:'Wir prüfen dein Dossier und melden uns innerhalb von 24 Stunden.',
+      timeline:[{ d:ds, t:'Bewerbung mit Rocken-Dossier gesendet' }]});
+    render();
+    snack('Bewerbung gesendet', `${j.company} — Blerta meldet sich innerhalb von 24 Stunden.`);
+  },
+  openApp(id){
+    const a=state.applications.find(x=>x.id===id);
+    if(!a||a.archived) return;
+    const tl=a.timeline.map(t=>`
+      <div class="tl-item ${t.future?'future':''}"><div class="tld">${t.d}</div><div class="dot"></div><div>${t.t}</div></div>`).join('');
+    this.sheet(`
+      <span class="chip blue">Schritt ${a.stage+1} von 5 · ${STAGES[a.stage]}</span>
+      <h2 style="margin:12px 0 3px">${a.title}</h2>
+      <div style="font-size:13px;color:var(--g600)">${a.company}</div>
+      ${a.appt?`
+      <div class="appt" style="margin-top:14px">
+        <div class="date-block"><div class="m">${a.appt.m}</div><div class="d">${a.appt.d}</div></div>
+        <div class="ab"><b>${a.appt.label}</b><span>${a.confirmed?'Bestätigt — liegt in deinem Kalender':'Bitte bestätige den Termin'}</span></div>
+        ${a.confirmed?'<span class="chip blue">✓ Fixiert</span>':''}
+      </div>`
+      :`${a.sla?`<div class="sla-line">◷ ${a.sla}</div>`:''}
+      <div class="nextbox" style="margin-top:14px"><span class="arrow">→</span><span><b>Nächster Schritt:</b> ${a.next}</span></div>`}
+      <span class="kicker" style="display:block;margin:18px 0 4px">Verlauf</span>
+      <div class="tl">${tl}</div>
+      <button class="btn btn-ghost" style="margin-top:12px" onclick="App.openChat('${a.consultant.key}')">Chat mit ${a.consultant.name.split(' ')[0]}</button>`);
+  },
+
+  /* --- Misc --- */
+  toggleSave(id){
+    const j=state.jobs.find(x=>x.id===id); j.saved=!j.saved; render();
+    snack(j.saved?'Gespeichert':'Entfernt', j.saved?`«${j.title}» liegt unter Jobs → ♥.`:'Aus deiner Merkliste entfernt.');
+  },
+  confirmInterview(taskId){
+    state.tasks=state.tasks.filter(t=>t.id!==taskId);
+    const a=state.applications.find(x=>x.id==='hoch');
+    if(a){ a.confirmed=true; a.owner='fixiert';
+      a.next='Interview bestätigt — Do, 18. Juni, 14:00. Bereite dich mit dem Prep-Guide vor.'; }
+    render();
+    celebrate('Termin bestätigt', 'Do, 18. Juni, 14:00 — liegt in deinem Kalender. Prep-Guide wartet im Hub.');
+  },
+  openStatus(){
+    const opts=[['Aktiv auf Suche','var(--green)'],['Offen für Angebote','var(--amber)'],['Nicht auf der Suche','var(--g400)']];
+    this.sheet(`
+      <h2>Dein Such-Status</h2>
+      <p style="font-size:13px;color:var(--g600);margin-top:6px">Blerta sieht deinen Status sofort.</p>
+      <div style="margin-top:10px">
+        ${opts.map(([s,c])=>`
+        <div class="opt-row" onclick="App.setStatus('${s}')">
+          <i class="od" style="background:${c}"></i>${s}
+          ${state.status===s?'<span style="margin-left:auto;color:var(--blue);font-weight:800">✓</span>':''}
+        </div>`).join('')}
+      </div>`);
+  },
+  setStatus(s){
+    state.status=s; this.closeSheet(); render();
+    snack('Status aktualisiert', s==='Nicht auf der Suche'
+      ? 'Alles gut — dein Profil bleibt bestehen. Sag uns, wenn es wieder losgehen soll.'
+      : `Du bist jetzt «${s}».`);
+  },
+  checklistAction(id){
+    if(id==='zeugnis'){ state.profilTab='dokumente'; render(); return; }
+    if(id==='uebermich'){ this.openUeberMich(); return; }
+    if(id==='referenz'){
+      this.sheet(`
+        <span class="kicker blue">${STAR}+10 %</span>
+        <h2 style="margin-top:7px">Referenz hinterlegen</h2>
+        <p style="font-size:13.5px;color:var(--g700);margin:9px 0 13px">Eine Referenzperson stärkt dein Dossier — wir kontaktieren sie nur nach Absprache mit dir.</p>
+        <div class="frow" style="padding:10px 0"><div class="fl">Name</div><input placeholder="z. B. Marco Steiner"></div>
+        <div class="frow" style="padding:10px 0;border:none"><div class="fl">Firma / Rolle</div><input placeholder="z. B. Spital Limmattal, Teamlead ICT"></div>
+        <button class="btn btn-primary" style="margin-top:14px" onclick="App.completeCheck('referenz','Referenz hinterlegt')">Speichern</button>`);
+      return;
+    }
+    if(id==='sprachen'){
+      this.sheet(`
+        <span class="kicker blue">${STAR}+5 %</span>
+        <h2 style="margin-top:7px">Sprachen ergänzen</h2>
+        <p style="font-size:13.5px;color:var(--g700);margin:9px 0 4px">Wähle aus, was zutrifft — Niveau kannst du später verfeinern.</p>
+        <div class="reason-chips">
+          <div class="sel">Deutsch · C2</div>
+          <div class="sel">Englisch · C1</div>
+          <div onclick="this.classList.toggle('sel')">Französisch · B1</div>
+          <div onclick="this.classList.toggle('sel')">Italienisch · A2</div>
+        </div>
+        <button class="btn btn-primary" onclick="App.completeCheck('sprachen','Sprachen gespeichert')">Speichern</button>`);
+      return;
+    }
+  },
+  openUeberMich(){
+    this.sheet(`
+      <span class="kicker blue">${STAR}+5 %</span>
+      <h2 style="margin-top:7px">Über mich</h2>
+      <p style="font-size:13.5px;color:var(--g700);margin:9px 0 11px">3–4 Sätze: Wer bist du, was kannst du, was suchst du?</p>
+      <textarea id="ueberMichText" style="min-height:130px">${state.profile.ueberMich||'Wirtschaftsinformatikerin mit Fokus SAP HCM und vier Jahren Erfahrung zwischen IT und HR. Ich bringe Systeme zum Laufen, die Menschen wirklich nutzen — am liebsten in Teams, die Tempo und Qualität verbinden.'}</textarea>
+      <button class="btn btn-primary" style="margin-top:13px" onclick="App.saveUeberMich()">Speichern</button>`);
+  },
+  saveUeberMich(){
+    state.profile.ueberMich=$('ueberMichText').value;
+    this.completeCheck('uebermich','«Über mich» gespeichert');
+  },
+  completeCheck(id,msg){
+    const c=state.checklist.find(x=>x.id===id);
+    if(c&&!c.done){ c.done=true; }
+    this.closeSheet(); render();
+    snack(msg, `Dein Profil ist jetzt ${completeness()} % komplett.`);
+  },
+  handleUpload(files){
+    if(!files||!files.length) return;
+    const now=new Date(), ds=now.toLocaleDateString('de-CH',{day:'2-digit',month:'2-digit',year:'numeric'});
+    [...files].forEach(f=>{
+      state.docs.push({ name:f.name, meta:(f.name.split('.').pop()||'PDF').toUpperCase()+' · '+Math.max(1,Math.round(f.size/1024))+' KB · '+ds, send:true });
+    });
+    const z=state.checklist.find(c=>c.id==='zeugnis');
+    if(z&&!z.done){ z.done=true; }
+    render();
+    snack('Hochgeladen', `${files.length} ${files.length===1?'Dokument':'Dokumente'} im Dossier — Profil jetzt ${completeness()} % komplett.`);
+  },
+
+  /* --- Hub / Notifs / Chat --- */
+  openHub(){
+    const cards=state.articles.map((a,i)=>`
+      <div class="notif-item" onclick="App.info('Artikel','Im Prototyp nur Teaser.')">
+        <span class="kicker ${i===0?'blue':''}">${a.cat} · ${a.time}</span>
+        <b style="margin-top:4px">${a.title}</b>
+      </div>`).join('');
+    this.sheet(`<h2>${STAR}Karriere-Hub</h2>
+      <p style="font-size:13px;color:var(--g600);margin-top:5px">Wissen, das im Prozess wirkt — passend zu dem, wo du stehst.</p>
+      <div style="margin-top:8px">${cards}</div>`);
+  },
+  openNotifs(){
+    this.sheet(`<h2>Benachrichtigungen</h2>
+      <div style="margin-top:8px">
+        <div class="notif-item" onclick="App.closeSheet();App.go('cockpit')"><b>Neuer Vorschlag von Blerta</b>SAP HCM Consultant:in bei Helvetia — Antwort bis Fr. <time>vor 2 Std.</time></div>
+        <div class="notif-item" onclick="App.closeSheet();App.go('bewerbungen')"><b>Interview-Einladung</b>HOCH Health möchte dich kennenlernen — Do, 18. Juni. <time>gestern</time></div>
+        <div class="notif-item" onclick="App.closeSheet();App.openHub()"><b>Neu im Karriere-Hub</b>«Die 7 Interview-Fragen, die immer kommen» <time>vor 2 Tagen</time></div>
+      </div>`);
+  },
+  /* Consultant-Profil: Foto + selbstgeschriebene Vorstellung — Nähe ohne Video-Produktionsaufwand */
+  openConsultant(key){
+    const c=C[key];
+    this.sheet(`
+      <div style="text-align:center;padding-top:6px">
+        <img src="${c.img}" style="width:88px;height:88px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 3px var(--white), 0 0 0 5.5px var(--blue-soft)">
+        <h2 style="margin-top:12px">${c.name}</h2>
+        <div class="metaline" style="margin-top:3px">${c.role}</div>
+        <div style="font-size:12px;color:var(--g600);margin-top:6px;display:inline-flex;align-items:center;gap:5px"><i class="dot-online"></i>Erreichbar · antwortet in ~2 Std.</div>
+      </div>
+      <div class="sect">Über mich</div>
+      <p class="rolep">${c.about}</p>
+      <div class="meta-grid" style="margin-top:14px">
+        ${c.cFacts.map(([l,v])=>`<div><div class="l">${l}</div><div class="v">${v}</div></div>`).join('')}
+      </div>
+      <p class="fine">Dein:e Consultant:in verdient an deiner Platzierung — nicht an deiner Bewerbung. Vorschläge kommen nur, wenn sie wirklich passen.</p>`,
+      `<button class="btn btn-primary" onclick="App.openChat('${key}')">Nachricht an ${c.name.split(' ')[0]}</button>
+       <button class="btn btn-ghost btn-sm" onclick="App.closeSheet()">Schliessen</button>`);
+  },
+  openChat(key){
+    state.activeChat = key || 'blerta';
+    const c = C[state.activeChat];
+    const msgs=state.chats[state.activeChat].map(m=>`<div class="msg ${m.who}">${m.text}<time>${m.time}</time></div>`).join('');
+    this.sheet(`
+      <div style="display:flex;align-items:center;gap:11px">
+        <img src="${c.img}" style="width:42px;height:42px;border-radius:50%;object-fit:cover">
+        <div><b style="font-family:var(--fh);font-size:15px">${c.name}</b>
+        <div style="font-size:11.5px;color:var(--g600);display:flex;align-items:center;gap:5px"><i class="dot-online"></i>Antwortet meist innerhalb von 2 Std.</div></div>
+      </div>
+      <div class="chat-wrap">
+        <div class="chat-msgs" id="chatMsgs">${msgs}</div>
+        <div class="chat-input">
+          <input id="chatField" placeholder="Schreib ${c.name.split(' ')[0]} …" onkeydown="if(event.key==='Enter')App.sendChat()">
+          <button onclick="App.sendChat()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+        </div>
+      </div>`);
+    const box=$('chatMsgs'); box.scrollTop=box.scrollHeight;
+  },
+  sendChat(){
+    const f=$('chatField'); if(!f.value.trim()) return;
+    const t=new Date().toLocaleTimeString('de-CH',{hour:'2-digit',minute:'2-digit'});
+    state.chats[state.activeChat].push({who:'me',text:f.value.trim(),time:t});
+    f.value='';
+    const box=$('chatMsgs');
+    box.innerHTML=state.chats[state.activeChat].map(m=>`<div class="msg ${m.who}">${m.text}<time>${m.time}</time></div>`).join('');
+    box.scrollTop=box.scrollHeight;
+  },
+};
+
+/* ================= RENDER ================= */
+function render(){
+  renderTabs();
+  const views={ cockpit:vCockpit, jobs:vJobs, bewerbungen:vBewerbungen, termine:vTermine, profil:vProfil };
+  const v=$('view');
+  v.classList.remove('view-anim'); void v.offsetWidth;
+  v.innerHTML=views[state.view]();
+  v.classList.add('view-anim');
+  /* Profil-Ring zählt hoch — seltener Moment, darf Delight haben */
+  if(state.view==='profil'){ const rv=v.querySelector('.ringrow .rv'); if(rv) countUp(rv, completeness()); }
+}
+render();
+</script>
+</body>
+</html>
