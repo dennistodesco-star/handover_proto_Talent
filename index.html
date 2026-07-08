@@ -1261,6 +1261,24 @@ body.figma-style .blt::before{ content:'✦'; width:auto; height:auto; backgroun
 .sal-row .salband{ margin-top:0; }
 .neu-badge{ display:inline-block; background:var(--blue); color:#fff; font-size:9.5px; font-weight:800; padding:2px 6px; border-radius:5px; text-transform:uppercase; letter-spacing:.05em; vertical-align:middle; margin-right:3px; }
 
+
+.exp-skills{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:10px; }
+.exp-skills-label{ font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:var(--g400); margin-right:2px; }
+.exp-skills .skill-chip{ font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:6px; background:var(--blue-tint); color:var(--blue-dark); }
+.skill-link{ cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:box-shadow .12s; }
+.skill-link:hover{ box-shadow:0 0 0 2px var(--blue-soft); }
+.sk-dots{ display:inline-flex; align-items:center; }
+.sk-dot{ width:16px; height:16px; border-radius:50%; background:linear-gradient(145deg,#1F1F23,#000); color:#fff; font-size:9px; font-weight:800; display:inline-flex; align-items:center; justify-content:center; border:1.5px solid var(--white); }
+.sk-dot + .sk-dot{ margin-left:-5px; }
+.skill-hint{ display:flex; align-items:center; gap:6px; font-size:12px; color:var(--g400); margin-top:9px; line-height:1.4; }
+.skill-hint .ic{ width:14px; height:14px; flex:none; color:var(--blue); }
+.link-row{ display:flex; align-items:center; gap:11px; padding:11px 12px; border:1px solid var(--line); border-radius:var(--r-md); margin-bottom:8px; cursor:pointer; transition:border-color .12s,background .12s; }
+.link-row:hover{ border-color:var(--blue); background:var(--blue-tint); }
+.link-row input{ width:17px; height:17px; accent-color:var(--blue); flex:none; cursor:pointer; }
+.link-logo{ width:30px; height:30px; border-radius:7px; background:linear-gradient(145deg,#1F1F23,#000); color:#fff; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center; flex:none; }
+.link-txt b{ display:block; font-size:13.5px; }
+.link-txt span{ display:block; font-size:12px; color:var(--g600); }
+
 </style>
 </head>
 <body>
@@ -2270,7 +2288,15 @@ function viewInterview(){
     </div>`).join('');
   return `<div class="an-grid">${left}<div class="prof-col">${right}</div></div>`;
 }
+const PROFILE_EXPS = [
+  { id:'e1', title:'SAP HCM Applikationsmanagerin', company:'Spital Limmattal, Schlieren', when:'2023 – heute', desc:'Betrieb & Weiterentwicklung SAP HCM, Schnittstellen-Projekte, 2nd-Level-Support' },
+  { id:'e2', title:'ICT Business Analystin', company:'Raiffeisen Schweiz, St. Gallen', when:'2021 – 2023', desc:'Requirements Engineering HR-Systeme, Testing, Rollouts' },
+];
+const HARD_SKILLS = ['SAP HCM (PA/PT)','Requirements Engineering','SQL','Schnittstellen'];
+const DEFAULT_SKILL_LINKS = { 'SAP HCM (PA/PT)':['e1'], 'Requirements Engineering':['e2'], 'SQL':['e1','e2'], 'Schnittstellen':['e1'] };
+function ensureSkillLinks(){ if(!state.skillLinks) state.skillLinks = JSON.parse(JSON.stringify(DEFAULT_SKILL_LINKS)); }
 function viewProfil() {
+  ensureSkillLinks();
   const pct=completeness();
   const p=state.profile;
   const editBtn=(label,fn)=>`<button class="btn btn-ghost btn-sm" onclick="${fn}">${label}</button>`;
@@ -2318,13 +2344,19 @@ function viewProfil() {
     ? `<p class="vac-text">${p.ueberMich}</p>`
     : `<div class="dropzone" onclick="App.openUeberMich()" style="padding:22px"><b>Erzähl in 3–4 Sätzen, wer du bist.</b><span>Steht zuoberst im Dossier — Firmen lesen ihn zuerst. <b style="color:var(--blue)">+5 %</b></span></div>`;
 
-  const exp = `
-    <div class="exp-item"><div class="exp-when">2023 – heute</div><div class="exp-b"><b>SAP HCM Applikationsmanagerin</b><span>Spital Limmattal, Schlieren</span><p>Betrieb & Weiterentwicklung SAP HCM, Schnittstellen-Projekte, 2nd-Level-Support</p></div></div>
-    <div class="exp-item"><div class="exp-when">2021 – 2023</div><div class="exp-b"><b>ICT Business Analystin</b><span>Raiffeisen Schweiz, St. Gallen</span><p>Requirements Engineering HR-Systeme, Testing, Rollouts</p></div></div>`;
+  const exp = PROFILE_EXPS.map(e=>{
+    const sk = HARD_SKILLS.filter(x=>(state.skillLinks[x]||[]).includes(e.id));
+    return `<div class="exp-item"><div class="exp-when">${e.when}</div><div class="exp-b"><b>${e.title}</b><span>${e.company}</span><p>${e.desc}</p>${sk.length?`<div class="exp-skills"><span class="exp-skills-label">Kenntnisse</span>${sk.map(x=>`<span class="skill-chip">${x}</span>`).join('')}</div>`:''}</div></div>`;
+  }).join('');
   const edu = `<div class="exp-item"><div class="exp-when">2018 – 2021</div><div class="exp-b"><b>BSc Wirtschaftsinformatik</b><span>FH St. Pölten</span></div></div>`;
+  const hardHtml = HARD_SKILLS.map((x,idx)=>{
+    const dots = (state.skillLinks[x]||[]).map(id=>{ const e=PROFILE_EXPS.find(y=>y.id===id); return e?`<span class="sk-dot" title="Eingesetzt bei ${e.company}">${e.company.trim()[0]}</span>`:''; }).join('');
+    return `<span class="vac-skill have skill-link" onclick="App.openSkillLink(${idx})" title="Mit Berufserfahrung verknüpfen">${x}${dots?`<span class="sk-dots">${dots}</span>`:''}</span>`;
+  }).join('');
   const skills = `
     <div class="prof-sub" style="margin-top:0">Hard Skills</div>
-    <div class="tag-row"><span class="vac-skill have">SAP HCM (PA/PT)</span><span class="vac-skill have">Requirements Engineering</span><span class="vac-skill have">SQL</span><span class="vac-skill have">Schnittstellen</span></div>
+    <div class="tag-row">${hardHtml}</div>
+    <div class="skill-hint"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4.5 12.5H11l-1 9.5L19.5 11H13z"/></svg> Tippe einen Hard Skill an, um ihn mit deiner Berufserfahrung zu verknüpfen — er erscheint dann direkt bei der Station.</div>
     <div class="prof-sub">Soft Skills</div>
     <div class="tag-row"><span class="vac-skill">Strukturiert</span><span class="vac-skill">Kommunikativ</span><span class="vac-skill">Eigenverantwortlich</span></div>`;
   const anforder = `
@@ -3224,6 +3256,18 @@ Key-User-Schulungen und Dokumentation</textarea></div>
 
   /* --- Chat --- */
   /* Consultant-Profil: Foto + selbstgeschriebene Vorstellung — Nähe ohne Video-Produktionsaufwand */
+  openSkillLink(idx){
+    ensureSkillLinks();
+    const x = HARD_SKILLS[idx]; const links = state.skillLinks[x]||[];
+    this.modal(`<div class="modal-head"><span class="kicker blue"><svg class="kstar" fill="currentColor"><use href="#rstar"/></svg>Kenntnis verknüpfen</span><h2 style="margin-top:7px">${x}</h2></div><div class="modal-body"><p style="font-size:13.5px;line-height:1.55;color:var(--g700)">Wo hast du <b>${x}</b> eingesetzt? Wähle die passenden Stationen — sie erscheinen dann direkt bei deiner Berufserfahrung und geben dem Skill Kontext.</p><div style="margin-top:15px">${PROFILE_EXPS.map(e=>`<label class="link-row"><input type="checkbox" ${links.includes(e.id)?'checked':''} onchange="App.toggleSkillLink(${idx},'${e.id}')"><span class="link-logo">${e.company.trim()[0]}</span><div class="link-txt"><b>${e.title}</b><span>${e.company} · ${e.when}</span></div></label>`).join('')}</div></div><div class="modal-foot"><button class="btn btn-primary" onclick="App.closeModal()">Fertig</button></div>`);
+  },
+  toggleSkillLink(idx, eid){
+    ensureSkillLinks(); const x=HARD_SKILLS[idx];
+    if(!state.skillLinks[x]) state.skillLinks[x]=[];
+    const arr=state.skillLinks[x], i=arr.indexOf(eid);
+    if(i>=0) arr.splice(i,1); else arr.push(eid);
+    render();
+  },
   openConsultant(key,noChat){
     const c=C[key];
     this.modal(`
