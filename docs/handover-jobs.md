@@ -99,6 +99,8 @@ The "Für dich" tab shows a **no-match card** (instead of results) when `noMatch
 | `profile` | profile completeness **< 70 %** | prompts profile completion |
 | `manual` | engine finds no matching internal vacancy | → browse "Alle Vakanzen" |
 
+This is the **same no-match component** as the Dashboard — see [`handover-dashboard.md`](handover-dashboard.md) → *States & edge cases* for the exact headline/CTA per variant. Reproduce: `?demo=recommended:empty&jt=match#jobs` (manual), `?demo=profilePct:45&jt=match#jobs` (profile), `?demo=status:waiting&jt=match#jobs` (activation).
+
 "Alle Vakanzen" / "Gespeichert" empty → "Keine Treffer für diese Filter" + reset link.
 
 ### Guest masking

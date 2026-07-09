@@ -48,6 +48,49 @@ Default order = as above, **but dynamic**: the **most urgent action always bubbl
 - **Cookie consent** overlays on first visit until dismissed (global, all screens).
 - ⚠ **FUTURE (out of MVP):** Karriere-Hub (⑥ ⑦), Zeugnis-Decoder/Generator, Interview-Preparation.
 
+### States & edge cases
+Every block reacts to CRM/account state. **Reproduce any state live** via the **Handover-States** toolbar (bottom-right of the prototype) or a `?demo=key:val,…` deep-link — this is exactly what that toolbar is for.
+
+**State matrix — which toggle drives what:**
+| Toggle (`?demo=`) | Values | Effect on Dashboard |
+|---|---|---|
+| `processes` | 0 / 1 / many | ② "Warten auf dich" + ③ "Deine Bewerbungen" (and tasks) empty ↔ full |
+| `termine` | 0 / some | ④ "Nächste Termine" **hidden** ↔ shown |
+| `recommended` | list / empty | ⑤ "Für dich gematcht" results ↔ **no-match card** |
+| `profilePct` | 10 / 45 / 70 / 100 | completeness card (< 100 %) · **< 70 % blocks matching** |
+| `status` | active / open / waiting / none | status pill · **waiting → activation banner (0) + matching blocked** |
+| `notifs` | true / false | false → "Benachrichtigungen aktivieren" banner |
+
+#### A · Empty / new candidate — `?demo=processes:0,termine:0,recommended:empty,profilePct:45`
+![Dashboard — empty / new candidate](img/dash-state-empty.png)
+- Greeting subtitle flips to *"Du bist auf dem neusten Stand …"*
+- ② **"Alles erledigt. Stark."** (no open actions / proposals)
+- ③ **"Noch keine aktiven Bewerbungen"** + CTA *(text depends on profile — see below)*
+- ④ **"Nächste Termine" is hidden entirely**
+- ⑤ **no-match card** — here the `profile` variant (< 70 %, with progress bar)
+
+#### B · Account in activation — `?demo=status:waiting`
+![Dashboard — activation pending banner](img/dash-state-activation.png)
+Status pill → "Waiting for activation"; amber **activation banner (0)**; matching is blocked (no-match `activation` variant).
+
+#### C · Notifications off — `?demo=notifs:false`
+![Dashboard — notifications-off banner](img/dash-state-notifs.png)
+Amber **"Benachrichtigungen aktivieren"** banner + *Aktivieren*; the header bell shows no badge.
+
+#### ⑤ No-match card — **3 variants** (`noMatchReason()`)
+| Reason | Trigger | Headline | CTAs |
+|---|---|---|---|
+| `activation` | account not activated | "Fast startklar — dein Profil wird freigeschaltet" | Alle Vakanzen durchstöbern · Profil schärfen |
+| `profile` | completeness **< 70 %** | "Noch keine Matches — vervollständige dein Profil" *(+ progress bar)* | Profil vervollständigen · Trotzdem alle Vakanzen ansehen |
+| `manual` | profile OK, engine finds nothing internally | "Aktuell keine neuen Vorschläge" | Alle Vakanzen durchstöbern · Profil schärfen |
+
+![Dashboard — no-match "manual" variant](img/dash-state-nomatch-manual.png)
+*`manual` variant — `?demo=recommended:empty,processes:0,profilePct:100`. It is never a dead-end: there is always a CTA out.*
+
+#### ③ "Deine Bewerbungen" empty text **also varies**
+- profile **< 70 %** → *"Vervollständige zuerst dein Profil …"* — CTA **Profil vervollständigen**
+- profile **OK** → *"Deine Prozesse erscheinen hier, sobald du auf einen Vorschlag reagierst …"* — CTA **Passende Jobs ansehen**
+
 ### Compare flow — "Angebote vergleichen" (initiated from ②)
 Lets the candidate compare multiple **consultant proposals** side-by-side.
 
