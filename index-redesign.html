@@ -1356,6 +1356,17 @@ body.figma-style .blt::before{ content:'✦'; width:auto; height:auto; backgroun
   .search-dd{ max-height:300px; }
 }
 
+
+.proto-mob{ display:inline-flex; align-items:center; gap:5px; color:var(--blue-dark); font-weight:800; cursor:pointer; margin-top:5px; }
+.proto-mob svg{ width:13px; height:13px; }
+.proto-mob:hover{ text-decoration:underline; }
+.mobprev{ position:fixed; inset:0; background:rgba(12,14,16,.62); backdrop-filter:blur(6px); z-index:300; display:none; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:20px; }
+.mobprev.show{ display:flex; }
+.mobprev-phone{ width:390px; max-width:calc(100vw - 40px); height:min(812px, 86vh); background:#0b0b0d; border-radius:40px; padding:11px; box-shadow:0 40px 90px -20px rgba(0,0,0,.6); }
+.mobprev-phone iframe{ width:100%; height:100%; border:0; border-radius:30px; background:#fff; }
+.mobprev-x{ background:var(--white); color:var(--black); border:none; border-radius:99px; padding:10px 22px; font-weight:800; font-size:13px; cursor:pointer; box-shadow:var(--sh-md); }
+.mobprev-hint{ color:rgba(255,255,255,.82); font-size:12.5px; font-weight:600; text-align:center; }
+
 </style>
 </head>
 <body>
@@ -1392,7 +1403,7 @@ body.figma-style .blt::before{ content:'✦'; width:auto; height:auto; backgroun
         onclick="App.openConsultant('blerta')">Lerne Blerta kennen →</div>
       <button onclick="App.openChat('blerta')">Nachricht schreiben</button>
     </div>
-    <div class="proto-tag">Prototyp v5 · 11.06.2026 · responsive</div>
+    <div class="proto-tag">Prototyp v5 · 11.06.2026<br><span class="proto-mob" onclick="App.openMobilePreview()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2.5"/><path d="M11 18h2"/></svg> Mobile-Ansicht</span></div>
   </aside>
 
   <!-- ============ MAIN ============ -->
@@ -1462,6 +1473,11 @@ body.figma-style .blt::before{ content:'✦'; width:auto; height:auto; backgroun
 
 <!-- Mobile: Bottom-Navigation + Chat-FAB -->
 <nav class="bottom-nav" id="bottomNav"></nav>
+<div class="mobprev" id="mobPrev" onclick="if(event.target===this)App.closeMobilePreview()">
+  <button class="mobprev-x" onclick="App.closeMobilePreview()">✕ Schliessen</button>
+  <div class="mobprev-phone"><iframe id="mobPrevFrame" title="Mobile-Ansicht"></iframe></div>
+  <div class="mobprev-hint">Mobile-Vorschau — so sieht Rocken Talent auf dem Smartphone aus</div>
+</div>
 <button class="chat-fab" onclick="App.openChat()" aria-label="Chat mit deinem Consultant">
   <img src="img/blerta-avdili.jpg" alt=""><span class="fab-dot"></span>
 </button>
@@ -2630,6 +2646,8 @@ function tabVorschau() {
 /* ================= APP (Actions) ================= */
 const App = {
   /* View Transitions API: Tab-Wechsel als sanfter Crossfade (progressive enhancement) */
+  openMobilePreview(){ var fr=document.getElementById('mobPrevFrame'); fr.src = location.href.split('#')[0].split('?')[0]; document.getElementById('mobPrev').classList.add('show'); },
+  closeMobilePreview(){ document.getElementById('mobPrev').classList.remove('show'); document.getElementById('mobPrevFrame').src='about:blank'; },
   go(v){
     if(v==='hub') state.hubSeen=true;
     const doIt=()=>{ state.view=v; state.editing=null; render(); document.querySelector('.content').scrollTop=0; };
