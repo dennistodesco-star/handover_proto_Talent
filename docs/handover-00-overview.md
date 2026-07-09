@@ -74,6 +74,7 @@ Three distinct **proposal channels** — keep them separate in data & UI:
 - **Company logos** are stored **in the CRM**.
 - **Score rules** as in §4 (≥ 70 %, recommender only).
 - **Cookie consent** overlays on first visit until dismissed (global, all screens). Full-width bottom bar; choices: *Einstellungen · Nur notwendige · Alle akzeptieren*.
+- **No timeframe / deadline promises (content rule).** RT must **never** state a guaranteed response time or a deadline for the application process — no *"Rückmeldung bis …"*, no *"Antwort bis …"*, no *"meldet sich innerhalb von 24 h"*. Rocken cannot guarantee that something happens within a fixed window. Use status text **without** time commitments (e.g. *"meldet sich bei dir"*, *"Wir prüfen deine Vorschläge — du musst nichts tun"*). Real, scheduled **appointment dates** (e.g. an interview on 18 Jun) are fine — those are events, not process guarantees.
 
 ## 9. Non-functional requirements (NFRs)
 | Area | MVP requirement |
