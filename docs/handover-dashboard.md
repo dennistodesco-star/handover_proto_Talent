@@ -5,6 +5,7 @@
 > **How to read this spec.** The numbered badges ①–⑦ on the screenshot map 1:1 to the rows in the table below.
 > **Markdown = logic / rules / flows** (the "why & when"). **Figma Dev Mode = visuals** (measurements, tokens, assets).
 > ⚠ **FUTURE** = designed but **not part of the MVP** (greyed out in the product).
+> **Global rules** (architecture, auth, matching, notifications, privacy, NFRs, glossary) live in [`handover-00-overview.md`](handover-00-overview.md) — this page only covers what's Dashboard-specific.
 
 ![Dashboard — annotated](img/dashboard-annotated.png)
 
