@@ -38,7 +38,7 @@ The job-discovery screen. Two jobs of work sit here: **(a)** show the candidate 
 | **Gespeichert** | Vacancies the candidate saved (heart) | No | no |
 
 ### Search — single, region-aware field
-![Single search field — job title, company, skill or region](img/jobs-search-wo.png)
+![Single search field — job title, company, skill or region](img/jobs-search.png)
 
 **One** free-text field: **job title / company / skill / region** (deliberately merged — no separate "where" box). Matching:
 - tokens match the vacancy **title, company, `reason`** *and* **location**;
@@ -128,7 +128,7 @@ Reproduce via the **Handover-States** toolbar or a `?demo=` deep-link (see Overv
 **"Gespeichert" empty** — dedicated card (heart hint + "Alle Vakanzen ansehen")
 ![Jobs — "Gespeichert" empty](img/jobs-state-saved-empty.png)
 
-**"Alle Vakanzen" — zero results** (here: Wo = "Bern", no vacancy in that region) → "Keine Treffer …" + reset
+**"Alle Vakanzen" — zero results** (here: search = "Bern", no vacancy in that region) → "Keine Treffer …" + reset
 ![Jobs — zero filter results](img/jobs-state-zero.png)
 
 ### Guest masking
