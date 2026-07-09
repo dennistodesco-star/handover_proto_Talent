@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Rocken Talent — Redesign (Figma-Angleichung)</title>
-<script>if(matchMedia('(max-width:768px)').matches&&!location.search.includes('desktop'))location.replace('mobile.html');</script>
+<!-- responsive: redesign rendert auch mobile (kein Redirect mehr) -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 391'%3E%3Cpath fill='%234893F4' d='M73.5395,150.575L7.5625,164.123L90.4221,193.124C109.134,187.652,126.254,177.756,140.334,164.271C154.414,150.786,165.04,134.109,171.314,115.65L209.879,0.537109H162.22L128.165,101.025C123.992,113.229,116.792,124.176,107.239,132.841C97.686,141.507,86.0914,147.608,73.5395,150.575ZM309.461,239.361L374.526,226L292.536,196.709C273.805,202.173,256.665,212.068,242.567,225.557C228.469,239.046,217.827,255.732,211.541,274.203L171.727,390.828H220.117L254.69,288.828C258.886,276.621,266.113,265.679,275.692,257.027C285.271,248.375,296.891,242.296,309.461,239.361ZM274.62,176.138L383.891,216.305V167.749L290.259,133.362C267.846,125.076,252.393,106.433,241.579,74.8633L221.113,4.82617L196.027,81.1192L198.327,88.9495C213.614,134.419,238.659,162.922,274.62,176.138ZM108.381,213.798L0.808594,174.336V222.892L92.6585,256.657C116.025,265.254,133.239,285.658,141.131,314.369L162.003,382.337L174.215,345.278L186.426,308.219L184.23,301.259C172.278,258.213,145.792,227.553,108.381,213.798Z'/%3E%3C/svg%3E">
 <style>
 @font-face { font-family:'Nohemi'; src:url('fonts/nohemi-bold.woff2') format('woff2'); font-weight:700 800; font-style:normal; font-display:swap; }
@@ -1340,6 +1340,22 @@ body.figma-style .blt::before{ content:'✦'; width:auto; height:auto; backgroun
 .ck-cat input{ width:18px; height:18px; accent-color:var(--blue); flex:none; }
 .ck-always{ font-size:11px!important; font-weight:800; color:var(--g400); background:var(--g100); padding:4px 10px; border-radius:99px; flex:none; }
 
+
+/* ===== Mobile-Härtung ===== */
+@media (max-width:768px){
+  h1,h2,h3,h4,.greeting p,.co,.metaline,.salband,.fjc-title,.ssc-title{ overflow-wrap:anywhere; }
+  .match-head,.mh-body,.pipe-top,.pipe-top > div,.action-card .body,.ev-body,.appt,.appt .ab,.co-hero,.co-hero > div,.fjc-top,.exp-b,.next-step,.detail-cols > div,.mh-body > *{ min-width:0; }
+  .section-head{ flex-wrap:wrap; gap:4px 10px; }
+  .section-head .more{ font-size:12px; }
+  .cookie-banner{ left:8px; right:8px; bottom:calc(70px + env(safe-area-inset-bottom)); width:auto; padding:16px 18px; }
+  .hbar{ right:12px; bottom:calc(74px + env(safe-area-inset-bottom)); }
+  .hbar-toggle{ font-size:11px; padding:9px 12px; }
+  body:has(.cookie-banner.show) .hbar{ bottom:calc(220px + env(safe-area-inset-bottom)); }
+  .ck-actions{ flex-direction:column; }
+  .ck-actions .btn{ width:100%; }
+  .search-dd{ max-height:300px; }
+}
+
 </style>
 </head>
 <body>
@@ -1376,7 +1392,7 @@ body.figma-style .blt::before{ content:'✦'; width:auto; height:auto; backgroun
         onclick="App.openConsultant('blerta')">Lerne Blerta kennen →</div>
       <button onclick="App.openChat('blerta')">Nachricht schreiben</button>
     </div>
-    <div class="proto-tag">Prototyp v5 · 11.06.2026 · <a href="mobile.html" style="color:inherit">Mobile-Version →</a></div>
+    <div class="proto-tag">Prototyp v5 · 11.06.2026 · responsive</div>
   </aside>
 
   <!-- ============ MAIN ============ -->
