@@ -23,7 +23,7 @@ The job-discovery screen. Two jobs of work sit here: **(a)** show the candidate 
 | # | Element | Content | Logic |
 |---|---|---|---|
 | **①** | Page header | "Jobs" + context line ("Aus N offenen Vakanzen …") | always |
-| **②** | Search — **two fields** | **"Was"** (job title, company or skill) + **"Wo"** (Ort oder Region) | Enter / "Suchen" → runs the search **and switches to "Alle Vakanzen"**. The **"Wo"** filter applies across **all tabs**. See *Search: Was + Wo* below. |
+| **②** | Search — **single smart field** | Free-text: **job title, company, skill or region** | Enter / "Suchen" → runs the search **and switches to "Alle Vakanzen"**. Region terms also match by location — see *Search* below. |
 | **③** | Tabs | **Für dich · Alle Vakanzen · Gespeichert** | see *Tabs* below |
 | **④** | Match score ring | 0–100 % + **match label** | **Recommender only, only ≥ 70 %.** Label tiers: **≥ 90 = "Sehr starker Match" · ≥ 80 = "Starker Match" · ≥ 70 = "Guter Match"**. On the other tabs the ring is replaced by the **company logo** and no score shows. |
 | **⑤** | `reason` / `why` pill | One-line "why you match" | **Recommender only.** Engine/LLM-generated. Absent on self-search cards. |
@@ -37,13 +37,16 @@ The job-discovery screen. Two jobs of work sit here: **(a)** show the candidate 
 | **Alle Vakanzen** | Full CRM vacancy pool (self-search) | **No** | **Yes** |
 | **Gespeichert** | Vacancies the candidate saved (heart) | No | no |
 
-### Search: „Was" + „Wo" (region)
-![Two-field search — Was + Wo](img/jobs-search-wo.png)
+### Search — single, region-aware field
+![Single search field — job title, company, skill or region](img/jobs-search-wo.png)
 
-Two fields: **Was** (job title / company / skill) and **Wo** (location or region). The **Wo** field:
-- accepts a **city** (substring match on the vacancy location) **or a Grossregion** (Zürich · Ostschweiz · Nordwestschweiz · Zentralschweiz · Bern · Genferseeregion) → matches **every location in that region**;
-- **applies across all tabs** (Für dich / Alle Vakanzen / Gespeichert), not only self-search;
+**One** free-text field: **job title / company / skill / region** (deliberately merged — no separate "where" box). Matching:
+- tokens match the vacancy **title, company, `reason`** *and* **location**;
+- a **city** matches by name; a **Grossregion** (Zürich · Ostschweiz · Nordwestschweiz · Zentralschweiz · Bern · Genferseeregion) matches **every location in that region**;
+- multiple tokens are **AND**-combined (e.g. "SAP Zürich" → SAP roles in the Zürich region);
 - maps to the CRM's **`search_regions`** (multi-location) in production — the prototype's region→cities map is a stand-in.
+
+Running a search switches to **"Alle Vakanzen"** (self-search). **Recent searches** record the **full query** (title + region together), not just the title.
 
 ### "Alle Vakanzen" (self-search) & filters
 The full CRM vacancy pool. Cards are in **plain mode** — company logo, **no score, no `why` pill**.
@@ -135,7 +138,7 @@ For logged-out visitors, **company data is hidden** — logo/name and exact loca
 There is **no "save search" feature** in RT (intentionally removed). Search-alert e-mails, if any, are sent **separately via Marketing** — not built into RT. Do **not** build search-saving unless explicitly scoped later.
 
 ### Recent-searches dropdown
-On focus, the **"Was"** field offers a **"Zuletzt gesucht"** dropdown (last queries) → re-runs the search. This is search *history* only — no saving.
+On focus, the search field offers a **"Zuletzt gesucht"** dropdown (last **full** queries, incl. region) → re-runs the search. This is search *history* only — no saving.
 
 ### Open / to confirm
 - ❓ Exact **match-label thresholds** & wording (prototype uses ≥90 / ≥80 / ≥70).

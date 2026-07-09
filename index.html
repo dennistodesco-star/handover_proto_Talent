@@ -289,8 +289,6 @@ body.flat .view-anim > *{ opacity:1 !important; animation:none !important; trans
 .searchbar input { flex:1; border:1px solid var(--line); border-radius:var(--r-full); padding:12px 20px;
   font-family:var(--fb); font-size:13.5px; outline:none; background:var(--white); box-shadow:var(--sh-xs); transition:all .15s; }
 .searchbar input:focus { border-color:var(--blue); box-shadow:0 0 0 3.5px var(--blue-soft); }
-.searchbar .sb-what{ flex:2; }
-.searchbar .sb-where{ flex:1; min-width:150px; }
 .tabs { display:inline-flex; gap:3px; background:var(--g100); border-radius:var(--r-full); padding:4px; margin-bottom:22px; }
 .tab { padding:8px 18px; font-weight:700; font-size:13px; color:var(--g600); cursor:pointer;
   border-radius:var(--r-full); transition:all .15s; user-select:none; }
@@ -1540,7 +1538,7 @@ const C = {
 };
 
 const state = {
-  view:'cockpit', jobTab:'match', appTab:'aktiv', profilTab:'persoenlich', profilMode:'general', analyseTab:'ist', settingsTab:'basic', faqTab:'faq', compareMode:false, compareSel:[], authed:true, vacancyId:null, vacTab:'vacancy', filters:{q:'',ort:'',pensum:[],modell:[],branche:[],lohn:null}, filtersOpen:false, filterStyle:'bar', fPop:null,
+  view:'cockpit', jobTab:'match', appTab:'aktiv', profilTab:'persoenlich', profilMode:'general', analyseTab:'ist', settingsTab:'basic', faqTab:'faq', compareMode:false, compareSel:[], authed:true, vacancyId:null, vacTab:'vacancy', filters:{q:'',pensum:[],modell:[],branche:[],lohn:null}, filtersOpen:false, filterStyle:'bar', fPop:null,
   status:'Aktiv auf Suche',
   profile:{ name:'Hannah Seier', geburtstag:'20. Mai 1999', nationalitaet:'Österreich',
             wohnort:'Zürich', arbeitsweg:'ÖV', email:'hannah.seier@gmail.com',
@@ -2090,8 +2088,8 @@ function applyFilters(list){
   const f=state.filters; const q=(f.q||'').toLowerCase().trim();
   const BR={IT:['sap','ict','software','applikation','analyst','informatik','digital'],HR:['hr-','hcm','personal','recruit'],Healthcare:['health','spital','klinik','pflege'],Finance:['controll','finance','bank','versicher','treuhand'],Industrie:['industrie','produktion','einkauf','supply']};
   return list.filter(j=>{
-    const hay=((j.title||'')+' '+(j.company||'')+' '+(j.reason||'')).toLowerCase();
-    if(q && hay.indexOf(q)<0) return false;
+    const hay=((j.title||'')+' '+(j.company||'')+' '+(j.reason||'')+' '+(j.location||'')).toLowerCase();
+    if(q){ const toks=q.split(/\s+/).filter(Boolean); if(!toks.every(function(tk){ return hay.indexOf(tk)>=0 || ortMatch(j.location,tk); })) return false; }
     if(f.modell.length && !f.modell.some(m=>(j.model||'').toLowerCase().indexOf(m.toLowerCase())>=0)) return false;
     if(f.pensum.length && !f.pensum.some(pp=>(j.workload||'').indexOf(pp)>=0)) return false;
     if(f.lohn){ const m=(j.salary||'').match(/\d+/); const k=m?parseInt(m[0]):0; if(!k || k<f.lohn) return false; }
@@ -2150,10 +2148,9 @@ function viewJobs() {
   const noMatch = hasNoMatch();
   const base = t==='match' ? (noMatch?[]:rankedMatches()) : t==='saved'?state.jobs.filter(j=>j.saved) : state.jobs;
   const showFilters = (t==='all');
-  const list0 = showFilters ? applyFilters(base) : base;
-  const list = (state.filters.ort&&state.filters.ort.trim()) ? list0.filter(j=>ortMatch(j.location,state.filters.ort)) : list0;
+  const list = showFilters ? applyFilters(base) : base;
   const f=state.filters;
-  const active = f.pensum.length+f.modell.length+f.branche.length+(f.lohn?1:0)+((f.ort&&f.ort.trim())?1:0);
+  const active = f.pensum.length+f.modell.length+f.branche.length+(f.lohn?1:0);
   const fstyle = state.filterStyle || 'bar';
   const chipData=[].concat(f.pensum.map(v=>['pensum',v,v+' %']),f.modell.map(v=>['modell',v,v]),f.branche.map(v=>['branche',v,v]),f.lohn?[['lohn',f.lohn,'ab '+f.lohn+'k']]:[]);
   const chips = (showFilters && chipData.length)?`<div class="active-chips" style="margin:12px 0 0">${chipData.map(c=>`<span class="active-chip" onclick="${c[0]==='lohn'?'App.setLohn(null)':`App.toggleFilter('${c[0]}','${c[1]}')`}">${c[2]} ✕</span>`).join('')}</div>`:'';
@@ -2192,9 +2189,8 @@ function viewJobs() {
     <div class="greeting"><h1>Jobs</h1><p>Aus 7'815 offenen Vakanzen zeigen wir dir zuerst, was wirklich zu dir passt.</p></div>
     <div class="search-wrap" style="margin-top:20px">
       <div class="searchbar">
-        <input class="sb-what" value="${f.q||''}" placeholder="Jobtitel, Firma oder Skill …" onkeydown="if(event.key==='Enter')App.runSearch()">
-        <input class="sb-where" list="regionList" value="${f.ort||''}" placeholder="Ort oder Region" onkeydown="if(event.key==='Enter')App.runSearch()">
-        <button class="btn btn-dark" onclick="App.runSearch()">Suchen</button>
+        <input class="sb-what" list="regionList" value="${f.q||''}" placeholder="Jobtitel, Firma, Skill oder Region …" onkeydown="if(event.key==='Enter')App.setQuery(this.value)">
+        <button class="btn btn-dark" onclick="App.setQuery(document.querySelector('.searchbar input').value)">Suchen</button>
       </div>
       <datalist id="regionList"><option value="Zürich"></option><option value="Bern"></option><option value="Basel"></option><option value="Luzern"></option><option value="St. Gallen"></option><option value="Winterthur"></option><option value="Ostschweiz"></option><option value="Zentralschweiz"></option><option value="Nordwestschweiz"></option><option value="Genferseeregion"></option></datalist>
       ${!isFig ? searchDropdown() : ''}
@@ -3527,12 +3523,10 @@ Key-User-Schulungen und Dokumentation</textarea></div>
   setVacTab(t){ state.vacTab=t; render(); },
   toggleLangMenu(e){ if(e) e.stopPropagation(); const m=$('langMenu'); if(m) m.classList.toggle('open'); },
   setLang(l,e){ if(e) e.stopPropagation(); document.querySelectorAll('.lang-opt').forEach(function(a){ a.classList.toggle('on', a.dataset.l===l); }); this.toastInfo('Sprache', (l==='de'?'Deutsch':'English')+' gewählt — im Prototyp ohne echte Übersetzung.'); },
-  runSearch(){ const w=document.querySelector('.sb-what'), o=document.querySelector('.sb-where'); this.setSearch(w?w.value:'', o?o.value:''); },
-  setSearch(q,ort){ ensureRecentSearches(); if(q&&q.trim()){ const a=state.recentSearches; const i=a.indexOf(q); if(i>=0)a.splice(i,1); a.unshift(q); state.recentSearches=a.slice(0,5); } state.filters.q=q||''; state.filters.ort=(ort||''); state.jobTab='all'; render(); },
   setQuery(q){ ensureRecentSearches(); if(q&&q.trim()){ const a=state.recentSearches; const i=a.indexOf(q); if(i>=0)a.splice(i,1); a.unshift(q); state.recentSearches=a.slice(0,5); } state.filters.q=q; state.jobTab='all'; render(); },
   toggleFilter(grp,val){ const a=state.filters[grp]; const i=a.indexOf(val); if(i>=0)a.splice(i,1); else a.push(val); render(); this._syncFilterPanel(); },
   setLohn(v){ state.filters.lohn = (state.filters.lohn==v ? null : (v==null?null:+v)); render(); this._syncFilterPanel(); },
-  resetFilters(){ state.filters={q:'',ort:'',pensum:[],modell:[],branche:[],lohn:null}; render(); this._syncFilterPanel(); },
+  resetFilters(){ state.filters={q:'',pensum:[],modell:[],branche:[],lohn:null}; render(); this._syncFilterPanel(); },
   toggleFiltersOpen(){ state.filtersOpen=!state.filtersOpen; render(); },
   setFilterStyle(v){ state.filterStyle=v; state.filtersOpen=false; state.fPop=null; render(); },
   toggleFPop(grp){ state.fPop = state.fPop===grp?null:grp; render(); },
