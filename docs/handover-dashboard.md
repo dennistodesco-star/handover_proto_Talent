@@ -47,6 +47,18 @@ Default order = as above, **but dynamic**: the **most urgent action always bubbl
 - **Cookie consent** overlays on first visit until dismissed (global, all screens).
 - ⚠ **FUTURE (out of MVP):** Karriere-Hub (⑥ ⑦), Zeugnis-Decoder/Generator, Interview-Preparation.
 
+### Compare flow — "Angebote vergleichen" (initiated from ②)
+Lets the candidate compare multiple **consultant proposals** side-by-side.
+
+- **Entry** — link **"Angebote vergleichen ⇄"** in the ② header; shown **only when > 1 proposal** exists.
+- **Compare mode** — each proposal card becomes selectable: a checkbox appears (top-right) **and the whole card is clickable** to toggle selection (selected = blue ring). The header link switches to **"Vergleich abbrechen ✕"**.
+- **Selection** — **2–4 offers** (hard cap 4; toast on the 5th).
+- **Tray** — a docked bottom tray shows the selected companies (each removable via ×) + a **"Vergleichen (N)"** button, **disabled until ≥ 2** are selected.
+- **Compare view (modal)** — selected offers **side-by-side** in a table. Rows: **Match · Lohnband · Standort · Pensum · Modell · Pendelzeit · Firma**. The **best value per row is highlighted** (highest Match/Lohnband, shortest Pendelzeit). **Rows where no offer has a value are hidden.**
+- **Guest masking** — logged-out: *Standort* → region only, *Firma* → "Vertraulich".
+- **Exit** — "Vergleich abbrechen" (header) or "Abbrechen" (tray).
+- **State** — `compareMode`, `compareSel[]` (global). Note: consultant proposals carry **no match score**, so the *Match* row is empty for them and auto-hidden (consistent with the score rule).
+
 ### Open / to confirm
 - Exact **account-status taxonomy** (the CRM likely has more than the 4 prototype statuses).
 - **Sort order within lists** (proposal order; matches by score desc?).
