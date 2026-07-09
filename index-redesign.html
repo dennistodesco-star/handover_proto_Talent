@@ -3983,7 +3983,7 @@ function compareTick(id){
 /* ================= RENDER ================= */
 function render(){
   if(state.view==='hub') state.hubSeen=true;
-  var _cb=document.getElementById('cookieBanner'); if(_cb) _cb.classList.toggle('show', !state.cookieOk);
+  var _cb=document.getElementById('cookieBanner'); if(_cb) _cb.classList.toggle('show', !state.cookieOk && !(typeof Demo!=='undefined' && Demo.s.cookie==='hide'));
   renderNav();
   $('crumb').textContent=TITLES[state.view];
   var _hs=$('headerStatus'); if(_hs){ _hs.textContent='● '+state.status; _hs.style.color=statusColor(state.status); }
