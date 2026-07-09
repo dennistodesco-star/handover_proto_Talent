@@ -1310,7 +1310,7 @@ body.figma-style .blt::before{ content:'✦'; width:auto; height:auto; backgroun
 .ssc-trash .ic{ width:18px; height:18px; }
 
 
-.search-wrap{ position:relative; }
+.search-wrap{ position:relative; z-index:60; }
 .search-dd{ display:none; position:absolute; top:calc(100% + 6px); left:0; right:0; background:var(--white); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--sh-pop); z-index:40; padding:8px; max-height:380px; overflow:auto; }
 .search-wrap:focus-within .search-dd{ display:block; }
 .sdd-sec{ font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:var(--g400); padding:9px 10px 4px; }
@@ -2189,10 +2189,9 @@ function viewJobs() {
     <div class="greeting"><h1>Jobs</h1><p>Aus 7'815 offenen Vakanzen zeigen wir dir zuerst, was wirklich zu dir passt.</p></div>
     <div class="search-wrap" style="margin-top:20px">
       <div class="searchbar">
-        <input class="sb-what" list="regionList" value="${f.q||''}" placeholder="Jobtitel, Firma, Skill oder Region …" onkeydown="if(event.key==='Enter')App.setQuery(this.value)">
+        <input class="sb-what" value="${f.q||''}" placeholder="Jobtitel, Firma, Skill oder Region …" onkeydown="if(event.key==='Enter')App.setQuery(this.value)">
         <button class="btn btn-dark" onclick="App.setQuery(document.querySelector('.searchbar input').value)">Suchen</button>
       </div>
-      <datalist id="regionList"><option value="Zürich"></option><option value="Bern"></option><option value="Basel"></option><option value="Luzern"></option><option value="St. Gallen"></option><option value="Winterthur"></option><option value="Ostschweiz"></option><option value="Zentralschweiz"></option><option value="Nordwestschweiz"></option><option value="Genferseeregion"></option></datalist>
       ${!isFig ? searchDropdown() : ''}
     </div>
     <div class="tabs">
