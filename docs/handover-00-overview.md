@@ -119,7 +119,7 @@ Three distinct **proposal channels** — keep them separate in data & UI:
 |---|---|---|
 | 1 | Home / Dashboard | [`handover-dashboard.md`](handover-dashboard.md) |
 | 2 | Jobs & Suche | [`handover-jobs.md`](handover-jobs.md) |
-| 3 | Bewerbungen | *(to come)* |
+| 3 | Bewerbungen | [`handover-bewerbungen.md`](handover-bewerbungen.md) |
 | 4 | Profil | *(to come)* |
 | 5 | Vakanz-Detail | *(to come)* |
 | 6 | Termine | *(to come)* |
