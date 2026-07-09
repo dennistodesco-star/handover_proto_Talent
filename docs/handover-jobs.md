@@ -38,15 +38,21 @@ The job-discovery screen. Two jobs of work sit here: **(a)** show the candidate 
 | **Gespeichert** | Vacancies the candidate saved (heart) | No | no |
 | ~~Gespeicherte Suchen~~ | *(prototype/Figma-only)* | — | — | ⚠ **Not MVP** — see *Saved searches* |
 
-### Filters (on "Alle Vakanzen")
-![Jobs — "Alle Vakanzen" / filter, annotated](img/jobs-filter-annotated.png)
+### "Alle Vakanzen" (self-search) & filters
+The full CRM vacancy pool. Cards are in **plain mode** — company logo, **no score, no `why` pill**.
+
+![Jobs — "Alle Vakanzen", annotated](img/jobs-alle-annotated.png)
 
 | # | Element | Logic |
 |---|---|---|
-| **①** | Result count | "N Vakanzen" (+ " · gefiltert" when filters active) |
-| **②** | Filter controls | **Pensum · Arbeitsmodell · Lohn ab · Branche** — multi-select popovers; each shows an active count |
-| **③** | Filter options | e.g. Pensum: 100 % / 80–100 % / 60–80 % |
+| **①** | Active tab | "Alle Vakanzen" |
+| **②** | Result count | "N Vakanzen" (+ " · gefiltert" when filters active) |
+| **③** | Filter controls | **Pensum · Arbeitsmodell · Lohn ab · Branche** — multi-select popovers; each shows an active count |
 | **④** | Plain job card | **company logo**, **no score**, **no `why` pill** — otherwise identical (title, company, salary band, location · pensum · model · date, save, actions) |
+
+**Filter popover** — each control opens a multi-select list (e.g. Pensum → 100 % / 80–100 % / 60–80 %):
+
+![Jobs — filter popover, annotated](img/jobs-filter-annotated.png)
 
 - Active filters render as removable **chips** below the bar + a **"Zurücksetzen"** reset.
 - Filtering/search is **backend-driven** in production (the prototype's keyword matching is only a stand-in).
@@ -57,6 +63,33 @@ Same card component in two modes (`matchCard(job, plain)`):
 - **Match mode** (Für dich): score ring + match label + `reason` pill.
 - **Plain mode** (Alle Vakanzen / Gespeichert): company logo, no score, no reason.
 - Shared: title, company, **salary band**, **"Neu"** badge (recent postings), meta line (location · workload · model · posted date), save heart, **Interesse melden / Details**.
+
+### "Gespeichert" tab
+Everything the candidate saved via the heart.
+
+![Jobs — "Gespeichert", annotated](img/jobs-saved-annotated.png)
+
+| # | Element | Logic |
+|---|---|---|
+| **①** | Active tab | "Gespeichert" |
+| **②** | Saved card | Any vacancy with the **heart toggled on**; un-hearting removes it here. Plain mode, no filters. |
+
+Empty → an empty-state hint (nothing saved yet).
+
+### Vacancy quick-detail — the "Details" modal
+"Details" on any job card opens a **modal** (`openJob`) — a quick, in-place deep-dive without leaving the list. *(A separate **full-page** vacancy view also exists — spec #5, coming.)*
+
+![Vacancy detail modal, annotated](img/jobs-detail-annotated.png)
+
+| # | Element | Content | Logic |
+|---|---|---|---|
+| **①** | Match chip | match label + score | recommender only; on self-search it reads "Vakanz" (no score) |
+| **②** | Title · salary band · benchmark | position, `salary`, market benchmark | benchmark shown when the CRM provides it |
+| **③** | "Warum du passt" | criteria list with ✓ (met) / – (missing) | recommender/`criteria` only; **logged-in only** |
+| **④** | Role content | Deine Verantwortung · Das bringst du mit · Benefits · Arbeitsort | from the vacancy (CRM) |
+| **⑤** | Company block | logo, about, employees, founded, industry, locations, culture, projects, gallery, Vakanz-Nr. | from the **CRM**; **masked for guests** (🔒 cover + login wall) |
+| **⑥** | Responsible consultant | the consultant for this position → opens their profile | see Overview §6 |
+| — | Footer | **save** · Schliessen · **Interesse melden** (→ "✓ Interesse gemeldet" once done; login CTA for guests) | |
 
 ### No-match & empty states
 The "Für dich" tab shows a **no-match card** (instead of results) when `noMatchReason()` returns one of — mirrors Overview §4:
@@ -83,4 +116,4 @@ On focus, the search bar offers a dropdown: **"Zuletzt gesucht"** (last queries)
 - ❓ Which **filter facets** the CRM actually supports (prototype: Pensum, Modell, Lohn, Branche).
 
 ---
-*Live: https://dennistodesco-star.github.io/handover_proto_Talent/ (`?jt=match#jobs` · `?jt=all#jobs`) · Source: `index.html`*
+*Live: https://dennistodesco-star.github.io/handover_proto_Talent/ (`?jt=match#jobs` · `?jt=all#jobs` · `?jt=saved#jobs` · `?openjob#jobs`) · Source: `index.html`*
