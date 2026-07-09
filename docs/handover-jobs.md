@@ -23,7 +23,7 @@ The job-discovery screen. Two jobs of work sit here: **(a)** show the candidate 
 | # | Element | Content | Logic |
 |---|---|---|---|
 | **①** | Page header | "Jobs" + context line ("Aus N offenen Vakanzen …") | always |
-| **②** | Search bar | Free-text: **job title, company or skill** | Enter / "Suchen" → runs the search **and switches to "Alle Vakanzen"**. A **recent-searches dropdown** suggests the last queries (see below). |
+| **②** | Search — **two fields** | **"Was"** (job title, company or skill) + **"Wo"** (Ort oder Region) | Enter / "Suchen" → runs the search **and switches to "Alle Vakanzen"**. The **"Wo"** filter applies across **all tabs**. See *Search: Was + Wo* below. |
 | **③** | Tabs | **Für dich · Alle Vakanzen · Gespeichert** | see *Tabs* below |
 | **④** | Match score ring | 0–100 % + **match label** | **Recommender only, only ≥ 70 %.** Label tiers: **≥ 90 = "Sehr starker Match" · ≥ 80 = "Starker Match" · ≥ 70 = "Guter Match"**. On the other tabs the ring is replaced by the **company logo** and no score shows. |
 | **⑤** | `reason` / `why` pill | One-line "why you match" | **Recommender only.** Engine/LLM-generated. Absent on self-search cards. |
@@ -36,7 +36,14 @@ The job-discovery screen. Two jobs of work sit here: **(a)** show the candidate 
 | **Für dich** *(default)* | `rankedMatches()` — recommender matches, ranked | **Yes** (≥ 70 %) | no |
 | **Alle Vakanzen** | Full CRM vacancy pool (self-search) | **No** | **Yes** |
 | **Gespeichert** | Vacancies the candidate saved (heart) | No | no |
-| ~~Gespeicherte Suchen~~ | *(prototype/Figma-only)* | — | — | ⚠ **Not MVP** — see *Saved searches* |
+
+### Search: „Was" + „Wo" (region)
+![Two-field search — Was + Wo](img/jobs-search-wo.png)
+
+Two fields: **Was** (job title / company / skill) and **Wo** (location or region). The **Wo** field:
+- accepts a **city** (substring match on the vacancy location) **or a Grossregion** (Zürich · Ostschweiz · Nordwestschweiz · Zentralschweiz · Bern · Genferseeregion) → matches **every location in that region**;
+- **applies across all tabs** (Für dich / Alle Vakanzen / Gespeichert), not only self-search;
+- maps to the CRM's **`search_regions`** (multi-location) in production — the prototype's region→cities map is a stand-in.
 
 ### "Alle Vakanzen" (self-search) & filters
 The full CRM vacancy pool. Cards are in **plain mode** — company logo, **no score, no `why` pill**.
@@ -74,7 +81,7 @@ Everything the candidate saved via the heart.
 | **①** | Active tab | "Gespeichert" |
 | **②** | Saved card | Any vacancy with the **heart toggled on**; un-hearting removes it here. Plain mode, no filters. |
 
-Empty → an empty-state hint (nothing saved yet).
+Empty → dedicated **"Noch keine gespeicherten Jobs"** card (see *States & edge cases*).
 
 ### Vacancy quick-detail — the "Details" modal
 "Details" on any job card opens a **modal** (`openJob`) — a quick, in-place deep-dive without leaving the list. *(A separate **full-page** vacancy view also exists — spec #5, coming.)*
@@ -99,18 +106,36 @@ The "Für dich" tab shows a **no-match card** (instead of results) when `noMatch
 | `profile` | profile completeness **< 70 %** | prompts profile completion |
 | `manual` | engine finds no matching internal vacancy | → browse "Alle Vakanzen" |
 
-This is the **same no-match component** as the Dashboard — see [`handover-dashboard.md`](handover-dashboard.md) → *States & edge cases* for the exact headline/CTA per variant. Reproduce: `?demo=recommended:empty&jt=match#jobs` (manual), `?demo=profilePct:45&jt=match#jobs` (profile), `?demo=status:waiting&jt=match#jobs` (activation).
+This is the **same no-match component** as the Dashboard — see [`handover-dashboard.md`](handover-dashboard.md) → *States & edge cases* for the exact headline/CTA per variant.
 
-"Alle Vakanzen" / "Gespeichert" empty → "Keine Treffer für diese Filter" + reset link.
+### States & edge cases
+Reproduce via the **Handover-States** toolbar or a `?demo=` deep-link (see Overview).
+
+| State | Trigger | Result |
+|---|---|---|
+| **"Für dich" empty** | `?demo=recommended:empty#jobs` (profile OK) | no-match `manual` card |
+| **"Für dich" blocked** | `?demo=profilePct:45` · `?demo=status:waiting` | no-match `profile` / `activation` card |
+| **"Gespeichert" empty** | nothing hearted | "Noch keine gespeicherten Jobs" card |
+| **"Alle Vakanzen" zero** | filter / region with no hit | "Keine Treffer …" + reset |
+| **Guest** | `?demo=authed:false` | company data masked (see *Guest masking*) |
+
+**"Für dich" empty** — `?demo=recommended:empty&jt=match#jobs` (the `manual` no-match variant; the `profile`/`activation` variants are in the Dashboard states)
+![Jobs — "Für dich" empty](img/jobs-state-fuerdich-empty.png)
+
+**"Gespeichert" empty** — dedicated card (heart hint + "Alle Vakanzen ansehen")
+![Jobs — "Gespeichert" empty](img/jobs-state-saved-empty.png)
+
+**"Alle Vakanzen" — zero results** (here: Wo = "Bern", no vacancy in that region) → "Keine Treffer …" + reset
+![Jobs — zero filter results](img/jobs-state-zero.png)
 
 ### Guest masking
 For logged-out visitors, **company data is hidden** — logo/name and exact location are masked (region only); confidential vacancies show a **"🔒 Vertrauliches Unternehmen"** cover. The **"confidential" flag is defined in the CRM** (see Overview §8).
 
-### Saved searches — ⚠ Not MVP
-The prototype shows "Gespeicherte Suchen" (a tab, a search-dropdown section, "Aktuelle Suche speichern"). **This is not a product feature.** Search-alert e-mails are sent **separately via Marketing**, not built into RT. Treat as demo-only; do **not** build unless scoped later.
+### Search saving — not offered
+There is **no "save search" feature** in RT (intentionally removed). Search-alert e-mails, if any, are sent **separately via Marketing** — not built into RT. Do **not** build search-saving unless explicitly scoped later.
 
 ### Recent-searches dropdown
-On focus, the search bar offers a dropdown: **"Zuletzt gesucht"** (last queries) → re-runs the search. (The "Gespeicherte Suchen" section of that dropdown falls under *Saved searches* above.)
+On focus, the **"Was"** field offers a **"Zuletzt gesucht"** dropdown (last queries) → re-runs the search. This is search *history* only — no saving.
 
 ### Open / to confirm
 - ❓ Exact **match-label thresholds** & wording (prototype uses ≥90 / ≥80 / ≥70).

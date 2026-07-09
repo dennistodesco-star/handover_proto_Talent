@@ -289,6 +289,8 @@ body.flat .view-anim > *{ opacity:1 !important; animation:none !important; trans
 .searchbar input { flex:1; border:1px solid var(--line); border-radius:var(--r-full); padding:12px 20px;
   font-family:var(--fb); font-size:13.5px; outline:none; background:var(--white); box-shadow:var(--sh-xs); transition:all .15s; }
 .searchbar input:focus { border-color:var(--blue); box-shadow:0 0 0 3.5px var(--blue-soft); }
+.searchbar .sb-what{ flex:2; }
+.searchbar .sb-where{ flex:1; min-width:150px; }
 .tabs { display:inline-flex; gap:3px; background:var(--g100); border-radius:var(--r-full); padding:4px; margin-bottom:22px; }
 .tab { padding:8px 18px; font-weight:700; font-size:13px; color:var(--g600); cursor:pointer;
   border-radius:var(--r-full); transition:all .15s; user-select:none; }
@@ -1538,7 +1540,7 @@ const C = {
 };
 
 const state = {
-  view:'cockpit', jobTab:'match', appTab:'aktiv', profilTab:'persoenlich', profilMode:'general', analyseTab:'ist', settingsTab:'basic', faqTab:'faq', compareMode:false, compareSel:[], authed:true, vacancyId:null, vacTab:'vacancy', filters:{q:'',pensum:[],modell:[],branche:[],lohn:null}, filtersOpen:false, filterStyle:'bar', fPop:null,
+  view:'cockpit', jobTab:'match', appTab:'aktiv', profilTab:'persoenlich', profilMode:'general', analyseTab:'ist', settingsTab:'basic', faqTab:'faq', compareMode:false, compareSel:[], authed:true, vacancyId:null, vacTab:'vacancy', filters:{q:'',ort:'',pensum:[],modell:[],branche:[],lohn:null}, filtersOpen:false, filterStyle:'bar', fPop:null,
   status:'Aktiv auf Suche',
   profile:{ name:'Hannah Seier', geburtstag:'20. Mai 1999', nationalitaet:'Österreich',
             wohnort:'Zürich', arbeitsweg:'ÖV', email:'hannah.seier@gmail.com',
@@ -2077,6 +2079,13 @@ function matchCard(j, plain) {
     </div>`;
 }
 
+function ortMatch(loc, term){
+  loc=(loc||'').toLowerCase(); term=(term||'').toLowerCase().trim(); if(!term) return true;
+  if(loc.indexOf(term)>=0) return true;
+  const REG={ 'zürich':['zürich','zurich','dübendorf','dubendorf','winterthur'], 'ostschweiz':['gallen','thurgau','chur','frauenfeld','appenzell'], 'nordwestschweiz':['aarau','baden','basel','olten','aargau'], 'zentralschweiz':['luzern','zug','schwyz','stans','sarnen'], 'bern':['bern','biel','thun'], 'genferseeregion':['genf','genève','geneva','lausanne','waadt','nyon'] };
+  for(const k in REG){ if(term.indexOf(k)>=0 || k.indexOf(term)>=0){ if(REG[k].some(c=>loc.indexOf(c)>=0)) return true; } }
+  return false;
+}
 function applyFilters(list){
   const f=state.filters; const q=(f.q||'').toLowerCase().trim();
   const BR={IT:['sap','ict','software','applikation','analyst','informatik','digital'],HR:['hr-','hcm','personal','recruit'],Healthcare:['health','spital','klinik','pflege'],Finance:['controll','finance','bank','versicher','treuhand'],Industrie:['industrie','produktion','einkauf','supply']};
@@ -2107,11 +2116,11 @@ function termineEmpty(){
 
 function ensureRecentSearches(){ if(!state.recentSearches) state.recentSearches=['SAP HCM Consultant','Business Analyst Zürich']; }
 function searchDropdown(){
-  ensureSavedSearches(); ensureRecentSearches();
-  const rec=state.recentSearches||[], sav=state.savedSearches||[];
-  const rows = (rec.length?`<div class="sdd-sec">Zuletzt gesucht</div>`+rec.map(q=>`<div class="sdd-item" onmousedown="event.preventDefault();App.setQuery('${(q||'').replace(/'/g,"\\'")}')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg><span>${q}</span></div>`).join(''):'')
-    + (sav.length?`<div class="sdd-sec">Gespeicherte Suchen</div>`+sav.map((x,i)=>`<div class="sdd-item" onmousedown="event.preventDefault();App.applySavedSearch(${i})"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg><span>${x.title||'Gespeicherte Suche'}</span><span class="sdd-badge">Alert</span></div>`).join(''):'');
-  return `<div class="search-dd">${rows}<div class="sdd-foot" onmousedown="event.preventDefault();App.saveSearchNew()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg><span>Aktuelle Suche speichern</span></div></div>`;
+  ensureRecentSearches();
+  const rec=state.recentSearches||[];
+  if(!rec.length) return '';
+  const rows = `<div class="sdd-sec">Zuletzt gesucht</div>`+rec.map(q=>`<div class="sdd-item" data-q="${q}" onmousedown="event.preventDefault();App.setQuery(this.dataset.q)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg><span>${q}</span></div>`).join('');
+  return `<div class="search-dd">${rows}</div>`;
 }
 function ensureSavedSearches(){ if(!state.savedSearches) state.savedSearches=[
   { title:'SAP HCM Consultant', newCount:12, filters:{q:'SAP HCM',pensum:['80–100'],modell:['Hybrid'],branche:['IT'],lohn:100} },
@@ -2141,9 +2150,10 @@ function viewJobs() {
   const noMatch = hasNoMatch();
   const base = t==='match' ? (noMatch?[]:rankedMatches()) : t==='saved'?state.jobs.filter(j=>j.saved) : state.jobs;
   const showFilters = (t==='all');
-  const list = showFilters ? applyFilters(base) : base;
+  const list0 = showFilters ? applyFilters(base) : base;
+  const list = (state.filters.ort&&state.filters.ort.trim()) ? list0.filter(j=>ortMatch(j.location,state.filters.ort)) : list0;
   const f=state.filters;
-  const active = f.pensum.length+f.modell.length+f.branche.length+(f.lohn?1:0);
+  const active = f.pensum.length+f.modell.length+f.branche.length+(f.lohn?1:0)+((f.ort&&f.ort.trim())?1:0);
   const fstyle = state.filterStyle || 'bar';
   const chipData=[].concat(f.pensum.map(v=>['pensum',v,v+' %']),f.modell.map(v=>['modell',v,v]),f.branche.map(v=>['branche',v,v]),f.lohn?[['lohn',f.lohn,'ab '+f.lohn+'k']]:[]);
   const chips = (showFilters && chipData.length)?`<div class="active-chips" style="margin:12px 0 0">${chipData.map(c=>`<span class="active-chip" onclick="${c[0]==='lohn'?'App.setLohn(null)':`App.toggleFilter('${c[0]}','${c[1]}')`}">${c[2]} ✕</span>`).join('')}</div>`:'';
@@ -2160,7 +2170,7 @@ function viewJobs() {
     ${active?`<a class="filt-reset" style="align-self:center;margin-left:2px" onclick="App.resetFilters()">Zurücksetzen</a>`:''}
   </div>`;
   const ssN = (state.savedSearches||[]).length;
-  const ssHtml = isFig ? `<div class="ss-actions"><button class="ss-btn" onclick="App.saveSearch()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg> Suche speichern</button></div>` : '';
+  const ssHtml = '';
   let filterUI='';
   if(showFilters){
     if(fstyle==='bar'){
@@ -2175,24 +2185,27 @@ function viewJobs() {
   }
   const empty = (t==='match')
     ? noMatchCard("App.setJobTab('all')")
-    : `<div class="card" style="padding:28px;text-align:center;color:var(--g600)">Keine Treffer für diese Filter. <span style="color:var(--blue-dark);font-weight:700;cursor:pointer" onclick="App.resetFilters()">Filter zurücksetzen</span></div>`;
+    : (t==='saved')
+    ? `<div class="card empty-card" style="text-align:center;padding:44px 32px"><div class="ec-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5 5 0 00-7.1 0L12 7.3l-1.7-1.7a5 5 0 10-7.1 7.1l1.7 1.7L12 21l7.1-7.1 1.7-1.7a5 5 0 000-7.1z"/></svg></div><b style="font-size:16px">Noch keine gespeicherten Jobs</b><p style="max-width:440px;margin:8px auto 0">Tippe bei einer Vakanz auf das Herz — hier sammelst du Jobs, die du dir später in Ruhe ansehen willst.</p><button class="btn btn-primary" style="margin-top:15px" onclick="App.setJobTab('all')">Alle Vakanzen ansehen</button></div>`
+    : `<div class="card" style="padding:28px;text-align:center;color:var(--g600)">Keine Treffer für diese Filter. <span style="color:var(--blue-dark);font-weight:700;cursor:pointer" onclick="App.resetFilters()">Zurücksetzen</span></div>`;
   return `
     <div class="greeting"><h1>Jobs</h1><p>Aus 7'815 offenen Vakanzen zeigen wir dir zuerst, was wirklich zu dir passt.</p></div>
     <div class="search-wrap" style="margin-top:20px">
       <div class="searchbar">
-        <input value="${f.q||''}" placeholder="Suche nach Jobtitel, Firma oder Skill …" onkeydown="if(event.key==='Enter')App.setQuery(this.value)">
-        <button class="btn btn-dark" onclick="App.setQuery(document.querySelector('.searchbar input').value)">Suchen</button>
+        <input class="sb-what" value="${f.q||''}" placeholder="Jobtitel, Firma oder Skill …" onkeydown="if(event.key==='Enter')App.runSearch()">
+        <input class="sb-where" list="regionList" value="${f.ort||''}" placeholder="Ort oder Region" onkeydown="if(event.key==='Enter')App.runSearch()">
+        <button class="btn btn-dark" onclick="App.runSearch()">Suchen</button>
       </div>
+      <datalist id="regionList"><option value="Zürich"></option><option value="Bern"></option><option value="Basel"></option><option value="Luzern"></option><option value="St. Gallen"></option><option value="Winterthur"></option><option value="Ostschweiz"></option><option value="Zentralschweiz"></option><option value="Nordwestschweiz"></option><option value="Genferseeregion"></option></datalist>
       ${!isFig ? searchDropdown() : ''}
     </div>
     <div class="tabs">
       <div class="tab ${t==='match'?'active':''}" onclick="App.setJobTab('match')">Für dich</div>
       <div class="tab ${t==='all'?'active':''}" onclick="App.setJobTab('all')">Alle Vakanzen</div>
       <div class="tab ${t==='saved'?'active':''}" onclick="App.setJobTab('saved')">Gespeichert</div>
-      ${isFig?`<div class="tab ${t==='savedsearches'?'active':''}" onclick="App.setJobTab('savedsearches')">Gespeicherte Suchen${ssN?` <span class="tab-badge">${ssN}</span>`:''}</div>`:''}
     </div>
-    ${t==='savedsearches' ? savedSearchCards() : `${filterUI}
-    <div class="${(t==='all' && isFig)?'match-list':'match-grid'}" style="margin-top:16px">${list.map(j=>matchCard(j, t!=='match')).join('')||empty}</div>`}`;
+    ${filterUI}
+    <div class="${(t==='all' && isFig)?'match-list':'match-grid'}" style="margin-top:16px">${list.map(j=>matchCard(j, t!=='match')).join('')||empty}</div>`;
 }
 function viewBewerbungen() {
   const t=state.appTab;
@@ -3514,10 +3527,12 @@ Key-User-Schulungen und Dokumentation</textarea></div>
   setVacTab(t){ state.vacTab=t; render(); },
   toggleLangMenu(e){ if(e) e.stopPropagation(); const m=$('langMenu'); if(m) m.classList.toggle('open'); },
   setLang(l,e){ if(e) e.stopPropagation(); document.querySelectorAll('.lang-opt').forEach(function(a){ a.classList.toggle('on', a.dataset.l===l); }); this.toastInfo('Sprache', (l==='de'?'Deutsch':'English')+' gewählt — im Prototyp ohne echte Übersetzung.'); },
+  runSearch(){ const w=document.querySelector('.sb-what'), o=document.querySelector('.sb-where'); this.setSearch(w?w.value:'', o?o.value:''); },
+  setSearch(q,ort){ ensureRecentSearches(); if(q&&q.trim()){ const a=state.recentSearches; const i=a.indexOf(q); if(i>=0)a.splice(i,1); a.unshift(q); state.recentSearches=a.slice(0,5); } state.filters.q=q||''; state.filters.ort=(ort||''); state.jobTab='all'; render(); },
   setQuery(q){ ensureRecentSearches(); if(q&&q.trim()){ const a=state.recentSearches; const i=a.indexOf(q); if(i>=0)a.splice(i,1); a.unshift(q); state.recentSearches=a.slice(0,5); } state.filters.q=q; state.jobTab='all'; render(); },
   toggleFilter(grp,val){ const a=state.filters[grp]; const i=a.indexOf(val); if(i>=0)a.splice(i,1); else a.push(val); render(); this._syncFilterPanel(); },
   setLohn(v){ state.filters.lohn = (state.filters.lohn==v ? null : (v==null?null:+v)); render(); this._syncFilterPanel(); },
-  resetFilters(){ state.filters={q:'',pensum:[],modell:[],branche:[],lohn:null}; render(); this._syncFilterPanel(); },
+  resetFilters(){ state.filters={q:'',ort:'',pensum:[],modell:[],branche:[],lohn:null}; render(); this._syncFilterPanel(); },
   toggleFiltersOpen(){ state.filtersOpen=!state.filtersOpen; render(); },
   setFilterStyle(v){ state.filterStyle=v; state.filtersOpen=false; state.fPop=null; render(); },
   toggleFPop(grp){ state.fPop = state.fPop===grp?null:grp; render(); },
