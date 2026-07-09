@@ -1324,8 +1324,11 @@ body.figma-style .blt::before{ content:'✦'; width:auto; height:auto; backgroun
 .sdd-foot .ic{ width:16px; height:16px; flex:none; }
 
 
-.cookie-banner{ position:fixed; left:50%; transform:translateX(-50%); bottom:20px; width:min(660px, calc(100vw - 32px)); background:var(--white); border:1px solid var(--line-strong); border-radius:var(--r-lg); box-shadow:var(--sh-lg); padding:14px 20px; z-index:85; display:none; align-items:center; gap:22px; }
+.cookie-banner{ position:fixed; left:248px; right:0; bottom:0; z-index:85; background:var(--white); border-top:1px solid var(--line-strong); box-shadow:0 -8px 30px -10px rgba(16,24,40,.14); padding:14px 32px 15px; display:none; align-items:center; gap:26px; }
 .cookie-banner .ck-left{ flex:1; min-width:0; }
+.cookie-banner .ck-p{ margin-top:4px; }
+@media (max-width:1080px){ .cookie-banner{ left:210px; } }
+@media (min-width:769px){ body:has(.cookie-banner.show) .hbar{ bottom:88px; } }
 .cookie-banner.show{ display:flex; }
 .ck-top{ display:flex; align-items:center; gap:9px; font-family:var(--fh); font-weight:700; font-size:15px; }
 .ck-top .ck-ic{ width:20px; height:20px; color:var(--blue); display:inline-flex; }
@@ -1348,7 +1351,7 @@ body.figma-style .blt::before{ content:'✦'; width:auto; height:auto; backgroun
   .match-head,.mh-body,.pipe-top,.pipe-top > div,.action-card .body,.ev-body,.appt,.appt .ab,.co-hero,.co-hero > div,.fjc-top,.exp-b,.next-step,.detail-cols > div,.mh-body > *{ min-width:0; }
   .section-head{ flex-wrap:wrap; gap:4px 10px; }
   .section-head .more{ font-size:12px; }
-  .cookie-banner{ left:8px; right:8px; transform:none; bottom:calc(70px + env(safe-area-inset-bottom)); width:auto; padding:16px 18px; flex-direction:column; align-items:stretch; }
+  .cookie-banner{ left:0; right:0; bottom:0; border-top:1px solid var(--line-strong); box-shadow:0 -8px 30px -10px rgba(16,24,40,.16); padding:16px 16px calc(16px + env(safe-area-inset-bottom)); flex-direction:column; align-items:stretch; }
   .hbar{ right:12px; bottom:calc(74px + env(safe-area-inset-bottom)); }
   .hbar-toggle{ font-size:11px; padding:9px 12px; }
   body:has(.cookie-banner.show) .hbar{ bottom:calc(220px + env(safe-area-inset-bottom)); }
