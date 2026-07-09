@@ -1323,6 +1323,23 @@ body.figma-style .blt::before{ content:'✦'; width:auto; height:auto; backgroun
 .sdd-foot:hover{ background:var(--blue-tint); }
 .sdd-foot .ic{ width:16px; height:16px; flex:none; }
 
+
+.cookie-banner{ position:fixed; left:20px; bottom:20px; width:min(400px, calc(100vw - 40px)); background:var(--white); border:1px solid var(--line-strong); border-radius:var(--r-lg); box-shadow:var(--sh-lg); padding:18px 20px; z-index:85; display:none; }
+.cookie-banner.show{ display:block; }
+.ck-top{ display:flex; align-items:center; gap:9px; font-family:var(--fh); font-weight:700; font-size:15px; }
+.ck-top .ck-ic{ width:20px; height:20px; color:var(--blue); display:inline-flex; }
+.ck-top .ck-ic svg{ width:20px; height:20px; }
+.ck-p{ font-size:12.5px; line-height:1.55; color:var(--g600); margin-top:8px; }
+.ck-link{ color:var(--blue-dark); font-weight:700; cursor:pointer; }
+.ck-actions{ display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+.ck-actions .btn{ flex:1; white-space:nowrap; }
+.ck-cat{ display:flex; align-items:center; justify-content:space-between; gap:14px; padding:13px 0; border-bottom:1px solid var(--line); cursor:pointer; }
+.ck-cat:last-child{ border-bottom:none; }
+.ck-cat b{ font-size:13.5px; display:block; }
+.ck-cat span{ font-size:12px; color:var(--g600); display:block; margin-top:1px; }
+.ck-cat input{ width:18px; height:18px; accent-color:var(--blue); flex:none; }
+.ck-always{ font-size:11px!important; font-weight:800; color:var(--g400); background:var(--g100); padding:4px 10px; border-radius:99px; flex:none; }
+
 </style>
 </head>
 <body>
@@ -1435,6 +1452,15 @@ body.figma-style .blt::before{ content:'✦'; width:auto; height:auto; backgroun
 
 <!-- Modal / Slideover / Toast roots -->
 <div class="overlay" id="modalRoot" onclick="if(event.target===this)App.closeModal()"><div class="modal" id="modalBox"></div></div>
+<div class="cookie-banner" id="cookieBanner">
+  <div class="ck-top"><span class="ck-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 8.6-8 10-4.5-1.4-8-5-8-10V5z"/><path d="M9 12l2 2 4-4"/></svg></span><b>Cookies & Datenschutz</b></div>
+  <p class="ck-p">Wir verwenden Cookies, um die Plattform zu betreiben und dein Erlebnis zu verbessern. Du entscheidest, was wir dürfen. <span class="ck-link" onclick="App.toastInfo('Datenschutz','Im Produkt verlinkt: vollständige Datenschutzerklärung.')">Datenschutzerklärung</span></p>
+  <div class="ck-actions">
+    <button class="btn btn-ghost btn-sm" onclick="App.openCookieSettings()">Einstellungen</button>
+    <button class="btn btn-ghost btn-sm" onclick="App.cookieChoice('essential')">Nur notwendige</button>
+    <button class="btn btn-primary btn-sm" onclick="App.cookieChoice('all')">Alle akzeptieren</button>
+  </div>
+</div>
 <div class="slide-root" id="slideRoot">
   <div class="slide-bg" onclick="App.closeSlide()"></div>
   <div class="slide-panel" id="slidePanel"></div>
@@ -3337,6 +3363,10 @@ Key-User-Schulungen und Dokumentation</textarea></div>
 
   /* --- Chat --- */
   /* Consultant-Profil: Foto + selbstgeschriebene Vorstellung — Nähe ohne Video-Produktionsaufwand */
+  cookieChoice(type){ state.cookieOk=true; if(typeof Demo!=='undefined'){ Demo.s.cookie='hide'; this.renderBar(); } this.toastInfo('Gespeichert', type==='all'?'Alle Cookies akzeptiert — jederzeit in den Einstellungen änderbar.':'Nur notwendige Cookies aktiv. Danke!'); render(); },
+  openCookieSettings(){
+    this.modal(`<div class="modal-head"><span class="kicker blue"><svg class="kstar" fill="currentColor"><use href="#rstar"/></svg>Datenschutz</span><h2 style="margin-top:7px">Cookie-Einstellungen</h2></div><div class="modal-body"><p style="font-size:13.5px;line-height:1.55;color:var(--g700)">Wähle, welche Cookies wir setzen dürfen. Notwendige Cookies sind für den Betrieb erforderlich und immer aktiv.</p><div style="margin-top:14px"><div class="ck-cat"><div><b>Notwendig</b><span>Login, Sicherheit, Grundfunktionen.</span></div><span class="ck-always">Immer an</span></div><label class="ck-cat"><div><b>Analyse</b><span>Hilft uns, die Plattform zu verbessern.</span></div><input type="checkbox" checked></label><label class="ck-cat"><div><b>Marketing</b><span>Relevantere Inhalte & Empfehlungen.</span></div><input type="checkbox"></label></div></div><div class="modal-foot"><button class="btn btn-ghost" onclick="App.closeModal();App.cookieChoice('essential')">Nur notwendige</button><button class="btn btn-primary" onclick="App.closeModal();App.cookieChoice('all')">Auswahl speichern</button></div>`);
+  },
   saveSearchNew(){ ensureSavedSearches(); const f=state.filters; const title=f.q||(f.branche[0]?f.branche[0]+'-Rollen':'Gespeicherte Suche'); state.savedSearches.unshift({title,newCount:0,filters:JSON.parse(JSON.stringify(f))}); this.toastInfo('Suche gespeichert','Wir benachrichtigen dich bei neuen passenden Treffern.'); render(); },
   saveSearch(){
     ensureSavedSearches(); const f=state.filters;
@@ -3698,16 +3728,17 @@ function viewFaq(){
 /* ================= HANDOVER: Demo state-switcher ================= */
 const Demo = {
   snap:null,
-  s:{ status:'active', profilePct:100, processes:'many', termine:'some', recommended:'list', authed:true, notifs:true, filterStyle:'bar', styling:'neu' },
+  s:{ status:'active', profilePct:100, processes:'many', termine:'some', recommended:'list', authed:true, notifs:true, filterStyle:'bar', styling:'neu', cookie:'show' },
   statusLabel:{ active:'Aktiv auf Suche', open:'Offen für Angebote', waiting:'Waiting for activation', none:'Nicht auf der Suche' },
   ensure(){ if(!this.snap) this.snap={ proposals:state.proposals.slice(), tasks:state.tasks.slice(), applications:state.applications.slice(), events:state.events.slice() }; },
   set(k,v){ this.ensure(); if(k==='profilePct') v=+v; else if(v==='true') v=true; else if(v==='false') v=false; this.s[k]=v; this.apply(); App.renderBar();
     if(k==='styling'){ render(); return; }
+    if(k==='cookie'){ state.cookieOk = (v==='hide'); render(); return; }
     if(k==='notifs'){ render(); setTimeout(function(){ var _np=$('notifPanel'); if(_np) _np.classList.add('open'); var _ap=$('acctPanel'); if(_ap) _ap.classList.remove('open'); },0); return; }
     if(k==='authed'){ render(); if(state.proposals[0]) App.openProposal(state.proposals[0].id); else if(state.jobs[0]) App.openJob(state.jobs[0].id); return; }
     if(k==='filterStyle'){ state.view='jobs'; state.jobTab='all'; render(); var _fc=document.querySelector('.content'); if(_fc)_fc.scrollTop=0; return; }
     state.view='cockpit'; state.editing=null; render(); var _c=document.querySelector('.content'); if(_c)_c.scrollTop=0; },
-  reset(){ this.s={ status:'active', profilePct:100, processes:'many', termine:'some', recommended:'list', authed:true, notifs:true, filterStyle:'bar', styling:'neu' }; this.apply(); App.renderBar(); render(); },
+  reset(){ this.s={ status:'active', profilePct:100, processes:'many', termine:'some', recommended:'list', authed:true, notifs:true, filterStyle:'bar', styling:'neu', cookie:'show' }; this.apply(); App.renderBar(); render(); },
   apply(){
     this.ensure(); const S=this.snap, d=this.s;
     if(d.processes==='0'){ state.proposals=[]; state.tasks=[]; state.applications=[]; }
@@ -3809,6 +3840,7 @@ const HBAR_GROUPS = [
   ['Login-Status (Vacancy)','authed',[[true,'Eingeloggt'],[false,'Gast']]],
   ['Filter-Ansicht (Jobs)','filterStyle',[['bar','Oben'],['drawer','Seite']]],
   ['Styling','styling',[['neu','Neuer Vorschlag'],['figma','Figma alt']]],
+  ['Cookie-Banner','cookie',[['show','Zeigen'],['hide','Aus']]],
 ];
 
 /* ================= VACANCY PREVIEW (auth masked vs full) ================= */
@@ -3895,6 +3927,7 @@ function compareTick(id){
 /* ================= RENDER ================= */
 function render(){
   if(state.view==='hub') state.hubSeen=true;
+  var _cb=document.getElementById('cookieBanner'); if(_cb) _cb.classList.toggle('show', !state.cookieOk);
   renderNav();
   $('crumb').textContent=TITLES[state.view];
   var _hs=$('headerStatus'); if(_hs){ _hs.textContent='● '+state.status; _hs.style.color=statusColor(state.status); }
