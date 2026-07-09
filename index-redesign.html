@@ -1279,6 +1279,21 @@ body.figma-style .blt::before{ content:'✦'; width:auto; height:auto; backgroun
 .link-txt b{ display:block; font-size:13.5px; }
 .link-txt span{ display:block; font-size:12px; color:var(--g600); }
 
+
+.ss-actions{ margin-left:auto; display:flex; gap:8px; flex-wrap:wrap; }
+.ss-btn{ display:inline-flex; align-items:center; gap:7px; border:1px solid var(--line-strong); background:var(--white); color:var(--g700); font-weight:700; font-size:12.5px; padding:7px 13px; border-radius:10px; cursor:pointer; transition:border-color .12s,color .12s; }
+.ss-btn:hover{ border-color:var(--blue); color:var(--blue-dark); }
+.ss-btn .ic{ width:15px; height:15px; }
+.ss-count{ background:var(--blue); color:#fff; font-size:10.5px; font-weight:800; padding:1px 7px; border-radius:99px; }
+.ss-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 13px; border:1px solid var(--line); border-radius:var(--r-md); margin-bottom:9px; }
+.ss-row-l{ display:flex; align-items:center; gap:11px; min-width:0; }
+.ss-row-l .ic{ width:18px; height:18px; color:var(--blue); flex:none; }
+.ss-row-l b{ display:block; font-size:13.5px; }
+.ss-row-l span{ display:block; font-size:12px; color:var(--g600); }
+.ss-row-a{ display:flex; align-items:center; gap:8px; flex:none; }
+.ss-del{ border:none; background:none; color:var(--g400); cursor:pointer; font-size:15px; padding:4px 6px; }
+.ss-del:hover{ color:var(--red); }
+
 </style>
 </head>
 <body>
@@ -1982,6 +1997,10 @@ function termineEmpty(){
   </div>`;
 }
 
+function ensureSavedSearches(){ if(!state.savedSearches) state.savedSearches=[
+  { label:'SAP HCM · Zürich · 80–100 %', filters:{q:'SAP HCM',pensum:['80–100'],modell:['Hybrid'],branche:['IT'],lohn:100} },
+  { label:'Business Analyst · Remote', filters:{q:'Business Analyst',pensum:[],modell:['Remote'],branche:[],lohn:null} },
+]; }
 function viewJobs() {
   const t=state.jobTab;
   const noMatch = hasNoMatch();
@@ -2005,15 +2024,19 @@ function viewJobs() {
     ${fgroup('Branche','branche',[['IT','IT'],['HR','HR'],['Healthcare','Healthcare'],['Finance','Finance'],['Industrie','Industrie']])}
     ${active?`<a class="filt-reset" style="align-self:center;margin-left:2px" onclick="App.resetFilters()">Zurücksetzen</a>`:''}
   </div>`;
+  ensureSavedSearches();
+  const isFig = (typeof Demo!=='undefined' && Demo.s.styling==='figma');
+  const ssN = (state.savedSearches||[]).length;
+  const ssHtml = isFig ? `<div class="ss-actions"><button class="ss-btn" onclick="App.saveSearch()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg> Suche speichern</button><button class="ss-btn" onclick="App.openSavedSearches()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg> Gespeicherte Suchen${ssN?` <span class="ss-count">${ssN}</span>`:''}</button></div>` : '';
   let filterUI='';
   if(showFilters){
     if(fstyle==='bar'){
-      filterUI = `<div class="jobs-toolbar"><div class="jobs-count">${list.length} ${list.length===1?'Vakanz':'Vakanzen'}${active?' · gefiltert':''}</div></div>${bar}${chips}`;
+      filterUI = `<div class="jobs-toolbar"><div class="jobs-count">${list.length} ${list.length===1?'Vakanz':'Vakanzen'}${active?' · gefiltert':''}</div>${ssHtml}</div>${bar}${chips}`;
     } else {
       filterUI = `<div class="jobs-toolbar">
         <div class="jobs-count">${list.length} ${list.length===1?'Vakanz':'Vakanzen'}${active?' · gefiltert':''}</div>
         <button class="btn btn-ghost btn-sm filt-toggle ${active?'on':''}" onclick="App.openFilter()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg> Filter${active?` · ${active}`:''}</button>
-        ${active?`<span class="filt-reset" onclick="App.resetFilters()">Zurücksetzen</span>`:''}
+        ${active?`<span class="filt-reset" onclick="App.resetFilters()">Zurücksetzen</span>`:''}${ssHtml}
       </div>${chips}`;
     }
   }
@@ -3256,6 +3279,21 @@ Key-User-Schulungen und Dokumentation</textarea></div>
 
   /* --- Chat --- */
   /* Consultant-Profil: Foto + selbstgeschriebene Vorstellung — Nähe ohne Video-Produktionsaufwand */
+  saveSearch(){
+    ensureSavedSearches(); const f=state.filters; const parts=[];
+    if(f.q) parts.push(f.q); f.pensum.forEach(v=>parts.push(v+' %')); f.modell.forEach(v=>parts.push(v)); f.branche.forEach(v=>parts.push(v)); if(f.lohn) parts.push('ab '+f.lohn+'k');
+    const label = parts.length?parts.join(' · '):'Alle Vakanzen';
+    state.savedSearches.unshift({ label, filters:JSON.parse(JSON.stringify(f)) });
+    this.toastInfo('Suche gespeichert','Wir benachrichtigen dich, sobald neue passende Vakanzen reinkommen.');
+    render();
+  },
+  openSavedSearches(){
+    ensureSavedSearches(); const ss=state.savedSearches;
+    const bm=`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>`;
+    this.modal(`<div class="modal-head"><span class="kicker blue"><svg class="kstar" fill="currentColor"><use href="#rstar"/></svg>Gespeicherte Suchen</span><h2 style="margin-top:7px">${ss.length} ${ss.length===1?'Suche':'Suchen'} · Alerts aktiv</h2></div><div class="modal-body">${ss.length?ss.map((x,i)=>`<div class="ss-row"><div class="ss-row-l">${bm}<div><b>${x.label}</b><span>Benachrichtigung bei neuen Treffern</span></div></div><div class="ss-row-a"><button class="btn btn-ghost btn-sm" onclick="App.applySavedSearch(${i})">Anwenden</button><button class="ss-del" onclick="App.delSavedSearch(${i})" title="Löschen">✕</button></div></div>`).join(''):'<p style="font-size:13.5px;color:var(--g600);line-height:1.55">Noch keine gespeicherten Suchen. Speichere eine Suche über „Suche speichern", um bei neuen passenden Vakanzen benachrichtigt zu werden.</p>'}</div><div class="modal-foot"><button class="btn btn-primary" onclick="App.closeModal()">Schliessen</button></div>`);
+  },
+  applySavedSearch(i){ ensureSavedSearches(); const x=state.savedSearches[i]; if(!x) return; state.filters=JSON.parse(JSON.stringify(x.filters)); state.jobTab='all'; this.closeModal(); render(); },
+  delSavedSearch(i){ ensureSavedSearches(); state.savedSearches.splice(i,1); this.openSavedSearches(); render(); },
   openSkillLink(idx){
     ensureSkillLinks();
     const x = HARD_SKILLS[idx]; const links = state.skillLinks[x]||[];
