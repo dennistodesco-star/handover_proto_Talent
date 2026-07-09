@@ -1309,6 +1309,20 @@ body.figma-style .blt::before{ content:'✦'; width:auto; height:auto; backgroun
 .ssc-trash:hover{ color:var(--red); }
 .ssc-trash .ic{ width:18px; height:18px; }
 
+
+.search-wrap{ position:relative; }
+.search-dd{ display:none; position:absolute; top:calc(100% + 6px); left:0; right:0; background:var(--white); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--sh-pop); z-index:40; padding:8px; max-height:380px; overflow:auto; }
+.search-wrap:focus-within .search-dd{ display:block; }
+.sdd-sec{ font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:var(--g400); padding:9px 10px 4px; }
+.sdd-item{ display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:var(--r-md); cursor:pointer; font-size:14px; font-weight:600; color:var(--g700); }
+.sdd-item:hover{ background:var(--g100); }
+.sdd-item .ic{ width:16px; height:16px; color:var(--g400); flex:none; }
+.sdd-item > span:first-of-type{ flex:1; }
+.sdd-badge{ font-size:10px; font-weight:800; color:var(--blue-dark); background:var(--blue-tint); padding:2px 7px; border-radius:99px; }
+.sdd-foot{ display:flex; align-items:center; gap:10px; padding:11px 10px; margin-top:4px; border-top:1px solid var(--line); cursor:pointer; font-size:13.5px; font-weight:700; color:var(--blue-dark); }
+.sdd-foot:hover{ background:var(--blue-tint); }
+.sdd-foot .ic{ width:16px; height:16px; flex:none; }
+
 </style>
 </head>
 <body>
@@ -2012,6 +2026,14 @@ function termineEmpty(){
   </div>`;
 }
 
+function ensureRecentSearches(){ if(!state.recentSearches) state.recentSearches=['SAP HCM Consultant','Business Analyst Zürich']; }
+function searchDropdown(){
+  ensureSavedSearches(); ensureRecentSearches();
+  const rec=state.recentSearches||[], sav=state.savedSearches||[];
+  const rows = (rec.length?`<div class="sdd-sec">Zuletzt gesucht</div>`+rec.map(q=>`<div class="sdd-item" onmousedown="event.preventDefault();App.setQuery('${(q||'').replace(/'/g,"\\'")}')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg><span>${q}</span></div>`).join(''):'')
+    + (sav.length?`<div class="sdd-sec">Gespeicherte Suchen</div>`+sav.map((x,i)=>`<div class="sdd-item" onmousedown="event.preventDefault();App.applySavedSearch(${i})"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg><span>${x.title||'Gespeicherte Suche'}</span><span class="sdd-badge">Alert</span></div>`).join(''):'');
+  return `<div class="search-dd">${rows}<div class="sdd-foot" onmousedown="event.preventDefault();App.saveSearchNew()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg><span>Aktuelle Suche speichern</span></div></div>`;
+}
 function ensureSavedSearches(){ if(!state.savedSearches) state.savedSearches=[
   { title:'SAP HCM Consultant', newCount:12, filters:{q:'SAP HCM',pensum:['80–100'],modell:['Hybrid'],branche:['IT'],lohn:100} },
   { title:'Business Analyst · Remote', newCount:5, filters:{q:'Business Analyst',pensum:[],modell:['Remote'],branche:[],lohn:null} },
@@ -2077,9 +2099,12 @@ function viewJobs() {
     : `<div class="card" style="padding:28px;text-align:center;color:var(--g600)">Keine Treffer für diese Filter. <span style="color:var(--blue-dark);font-weight:700;cursor:pointer" onclick="App.resetFilters()">Filter zurücksetzen</span></div>`;
   return `
     <div class="greeting"><h1>Jobs</h1><p>Aus 7'815 offenen Vakanzen zeigen wir dir zuerst, was wirklich zu dir passt.</p></div>
-    <div class="searchbar" style="margin-top:20px">
-      <input value="${f.q||''}" placeholder="Suche nach Jobtitel, Firma oder Skill …" onkeydown="if(event.key==='Enter')App.setQuery(this.value)">
-      <button class="btn btn-dark" onclick="App.setQuery(document.querySelector('.searchbar input').value)">Suchen</button>
+    <div class="search-wrap" style="margin-top:20px">
+      <div class="searchbar">
+        <input value="${f.q||''}" placeholder="Suche nach Jobtitel, Firma oder Skill …" onkeydown="if(event.key==='Enter')App.setQuery(this.value)">
+        <button class="btn btn-dark" onclick="App.setQuery(document.querySelector('.searchbar input').value)">Suchen</button>
+      </div>
+      ${!isFig ? searchDropdown() : ''}
     </div>
     <div class="tabs">
       <div class="tab ${t==='match'?'active':''}" onclick="App.setJobTab('match')">Für dich</div>
@@ -3312,6 +3337,7 @@ Key-User-Schulungen und Dokumentation</textarea></div>
 
   /* --- Chat --- */
   /* Consultant-Profil: Foto + selbstgeschriebene Vorstellung — Nähe ohne Video-Produktionsaufwand */
+  saveSearchNew(){ ensureSavedSearches(); const f=state.filters; const title=f.q||(f.branche[0]?f.branche[0]+'-Rollen':'Gespeicherte Suche'); state.savedSearches.unshift({title,newCount:0,filters:JSON.parse(JSON.stringify(f))}); this.toastInfo('Suche gespeichert','Wir benachrichtigen dich bei neuen passenden Treffern.'); render(); },
   saveSearch(){
     ensureSavedSearches(); const f=state.filters;
     const title = f.q || (f.branche[0]?f.branche[0]+'-Rollen':'Gespeicherte Suche');
@@ -3399,7 +3425,7 @@ Key-User-Schulungen und Dokumentation</textarea></div>
   setVacTab(t){ state.vacTab=t; render(); },
   toggleLangMenu(e){ if(e) e.stopPropagation(); const m=$('langMenu'); if(m) m.classList.toggle('open'); },
   setLang(l,e){ if(e) e.stopPropagation(); document.querySelectorAll('.lang-opt').forEach(function(a){ a.classList.toggle('on', a.dataset.l===l); }); this.toastInfo('Sprache', (l==='de'?'Deutsch':'English')+' gewählt — im Prototyp ohne echte Übersetzung.'); },
-  setQuery(q){ state.filters.q=q; render(); },
+  setQuery(q){ ensureRecentSearches(); if(q&&q.trim()){ const a=state.recentSearches; const i=a.indexOf(q); if(i>=0)a.splice(i,1); a.unshift(q); state.recentSearches=a.slice(0,5); } state.filters.q=q; state.jobTab='all'; render(); },
   toggleFilter(grp,val){ const a=state.filters[grp]; const i=a.indexOf(val); if(i>=0)a.splice(i,1); else a.push(val); render(); this._syncFilterPanel(); },
   setLohn(v){ state.filters.lohn = (state.filters.lohn==v ? null : (v==null?null:+v)); render(); this._syncFilterPanel(); },
   resetFilters(){ state.filters={q:'',pensum:[],modell:[],branche:[],lohn:null}; render(); this._syncFilterPanel(); },
