@@ -5,6 +5,8 @@
 > **How to read the spec set** — **Markdown = logic / rules / flows** (the "why & when"); **Figma Dev Mode = visuals** (measurements, tokens, assets). Annotated screenshots use numbered badges ①②③ that map 1:1 to the tables.
 >
 > ⚠ **FUTURE** = designed but **not part of the MVP** (greyed out in the product). 🔧 **BUILD** = required but **not yet in the prototype**. ❓ **TBD** = open, to confirm with the CRM/backend team.
+>
+> **Every page spec ends with a "States & edge cases" section** documenting each `if`-case (empty / loading / no-match / guest / blocked …). Reproduce any state live via the **Handover-States** toolbar (bottom-right of the prototype) or a **`?demo=key:val,…`** deep-link. The toggles: `status` · `profilePct` · `processes` · `termine` · `recommended` · `notifs` · `authed` (guest) · `styling` · `cookie`.
 
 ---
 
