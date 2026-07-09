@@ -1367,6 +1367,12 @@ body.figma-style .blt::before{ content:'✦'; width:auto; height:auto; backgroun
 .mobprev-x{ background:var(--white); color:var(--black); border:none; border-radius:99px; padding:10px 22px; font-weight:800; font-size:13px; cursor:pointer; box-shadow:var(--sh-md); }
 .mobprev-hint{ color:rgba(255,255,255,.82); font-size:12.5px; font-weight:600; text-align:center; }
 
+
+.pstats > div { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; min-height:66px; padding:11px 10px; }
+.pstats > div.act { border-color:var(--blue); background:var(--blue-tint); box-shadow:var(--sh-sm); }
+.pstats b { line-height:1; }
+.pstats span { letter-spacing:.05em; line-height:1.2; }
+
 </style>
 </head>
 <body>
@@ -1597,6 +1603,15 @@ const state = {
         { d:'27.05.2026', t:'Dossier bei Selmoni eingereicht' },
         { d:'04.06.2026', t:'Dossier in Prüfung beim Hiring Manager' },
         { d:'13.06.2026', t:'Rückmeldung der Firma erwartet', future:true },
+      ]},
+    { id:'postf', title:'Business Analyst:in HR-Applikationen 80–100%', company:'PostFinance', initial:'P',
+      stage:1, owner:'rocken', archived:false, consultant:C.muqsit,
+      origin:'via Vorschlag von Muqsit',
+      next:'Rocken prüft deinen Vorschlag und reicht ihn bei Freigabe beim Unternehmen ein.',
+      sla:'In Prüfung — Rückmeldung meist innerhalb 24 Std.',
+      timeline:[
+        { d:'07.06.2026', t:'Du hast den Vorschlag angenommen' },
+        { d:'08.06.2026', t:'In Prüfung bei Rocken', future:true },
       ]},
     { id:'ticos', title:'Elektroplaner:in / Sachbearbeiter:in', company:'Ticos Engineering AG', initial:'T',
       stage:4, owner:null, archived:true, result:'Abgeschlossen', consultant:C.blerta, timeline:[] },
@@ -2189,27 +2204,27 @@ function viewBewerbungen() {
       ${a.feedback?`<div class="next-step" style="margin-top:14px"><span class="arrow">→</span><span>${a.feedback}</span>
         <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="App.go('jobs')">3 ähnliche Jobs ansehen</button></div>`:''}
     </div>`).join('');
-  /* Gruppierung nach «wer ist am Zug» — Handlungsrelevanz schlägt Pipeline-Stufe */
+  /* Kategorien nach «wer ist am Zug» — Mapping von Dennis bestätigt */
+  const af = state.appFilter || 'all';
   const GROUPS = [
-    ['dir',     'Du bist am Zug',                 'var(--amber)'],
-    ['fixiert', 'Termin steht — bereite dich vor','var(--blue)'],
-    ['firma',   'Beim Unternehmen — wir haken nach', 'var(--g400)'],
-    ['rocken',  'In Prüfung bei Rocken',          'var(--blue)'],
+    ['beidir',   'Du bist am Zug',                    'var(--amber)', ['dir','fixiert'], 'Wir warten auf deine Reaktion — Anfrage, Termin oder Angebot liegt bei dir.'],
+    ['firma',    'Beim Unternehmen — wir haken nach', 'var(--g400)',  ['firma'],         ''],
+    ['pruefung', 'In Prüfung bei Rocken',             'var(--blue)',  ['rocken'],        'Wir prüfen deine Vorschläge — meist innerhalb von 24 Std. Du musst nichts tun.'],
   ];
-  const grouped = GROUPS.map(([key,label,col])=>{
-    const items = active.filter(a=>a.owner===key);
+  const catCnt = owners => active.filter(a=>owners.includes(a.owner)).length;
+  const grouped = GROUPS.filter(g=>af==='all'||af===g[0]).map(([key,label,col,owners,hint])=>{
+    const items = active.filter(a=>owners.includes(a.owner));
     if(!items.length) return '';
     return `<div class="ghead" id="grp-${key}"><span class="gdot" style="background:${col}"></span>${label}<span class="gcnt">${items.length}</span></div>`
-      + (key==='rocken'?`<div class="ghint">Wir prüfen deine Vorschläge — meist innerhalb von 24 Std. Du musst nichts tun.</div>`:'')
+      + (hint?`<div class="ghint">${hint}</div>`:'')
       + items.map(a=>pipeCard(a)).join('');
   }).join('');
-  const n=k=>active.filter(a=>k==='rocken'?(a.owner==='rocken'||a.owner==='fixiert'):a.owner===k).length;
   const stats = `
     <div class="pstats">
-      <div onclick="App.setAppTab('aktiv')"><b>${active.length}</b><span>Alle</span></div>
-      <div class="${n('dir')?'':'zero'}" onclick="App.goGroup('dir')"><b style="color:var(--amber)">${n('dir')}</b><span>Bei dir</span></div>
-      <div class="${n('firma')?'':'zero'}" onclick="App.goGroup('firma')"><b>${n('firma')}</b><span>Beim Unternehmen</span></div>
-      <div class="${n('rocken')?'':'zero'}" onclick="App.goGroup('rocken')"><b style="color:var(--blue-dark)">${n('rocken')}</b><span>In Prüfung</span></div>
+      <div class="${af==='all'?'act':''}" onclick="App.setAppFilter('all')"><b>${active.length}</b><span>Alle</span></div>
+      <div class="${catCnt(['dir','fixiert'])?'':'zero'} ${af==='beidir'?'act':''}" onclick="App.setAppFilter('beidir')"><b style="color:var(--amber)">${catCnt(['dir','fixiert'])}</b><span>Bei dir</span></div>
+      <div class="${catCnt(['firma'])?'':'zero'} ${af==='firma'?'act':''}" onclick="App.setAppFilter('firma')"><b>${catCnt(['firma'])}</b><span>Beim Unternehmen</span></div>
+      <div class="${catCnt(['rocken'])?'':'zero'} ${af==='pruefung'?'act':''}" onclick="App.setAppFilter('pruefung')"><b style="color:var(--blue-dark)">${catCnt(['rocken'])}</b><span>In Prüfung</span></div>
     </div>`;
   return `
     <div class="greeting"><h1>Bewerbungen</h1><p>Jeder Prozess mit klarem Status — und wer gerade am Zug ist.</p></div>
@@ -2218,7 +2233,7 @@ function viewBewerbungen() {
       <div class="tab ${t==='aktiv'?'active':''}" onclick="App.setAppTab('aktiv')">Aktiv <span class="cnt">${active.length}</span></div>
       <div class="tab ${t==='archiv'?'active':''}" onclick="App.setAppTab('archiv')">Abgeschlossen <span class="cnt">${arch.length}</span></div>
     </div>
-    ${t==='aktiv' ? (grouped || `<div class="card empty-card" style="text-align:center;padding:38px 32px"><div class="ec-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v13H3zM3 7l3-4h12l3 4M9 12h6"/></svg></div><b style="font-size:17px">Noch keine laufenden Bewerbungen</b><p style="max-width:460px;margin:8px auto 0">Sobald du auf einen Vorschlag reagierst oder dich auf eine Vakanz bewirbst, erscheint hier jeder Prozess mit klarem Status — und wer gerade am Zug ist.</p><div class="nm-actions"><button class="btn btn-primary" onclick="App.go('jobs')">Passende Jobs ansehen →</button><button class="btn btn-ghost" onclick="App.go('profil')">Profil vervollständigen</button></div></div>`) : archCards}`;
+    ${t==='aktiv' ? (grouped || (af!=='all' ? `<div class="card" style="padding:22px;color:var(--g600)">Keine Prozesse in dieser Kategorie. <span style="color:var(--blue-dark);font-weight:700;cursor:pointer" onclick="App.setAppFilter('all')">Alle anzeigen</span></div>` : `<div class="card empty-card" style="text-align:center;padding:38px 32px"><div class="ec-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v13H3zM3 7l3-4h12l3 4M9 12h6"/></svg></div><b style="font-size:17px">Noch keine laufenden Bewerbungen</b><p style="max-width:460px;margin:8px auto 0">Sobald du auf einen Vorschlag reagierst oder dich auf eine Vakanz bewirbst, erscheint hier jeder Prozess mit klarem Status — und wer gerade am Zug ist.</p><div class="nm-actions"><button class="btn btn-primary" onclick="App.go('jobs')">Passende Jobs ansehen →</button><button class="btn btn-ghost" onclick="App.go('profil')">Profil vervollständigen</button></div></div>`)) : archCards}`;
 }
 
 function viewTermine() {
@@ -2662,6 +2677,7 @@ const App = {
     if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
   },
   setAppTab(t){ state.appTab=t; render(); },
+  setAppFilter(f){ state.appFilter=f; state.appTab='aktiv'; render(); var _c=document.querySelector('.content'); if(_c)_c.scrollTop=0; },
   setProfilTab(t){ state.profilTab=t; render(); },
   setProfilMode(m){ state.profilMode=m; render(); var c=document.querySelector('.content'); if(c)c.scrollTop=0; },
   setAnalyseTab(t){ state.analyseTab=t; render(); },
